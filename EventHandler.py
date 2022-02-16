@@ -13,3 +13,6 @@ def seriesFinished():
 def close():
     Team.saveAllTeamData()
     Season.getSeasonById(Globals.current_season).saveData()
+
+def initializeSeason():
+    Season.addSeason()

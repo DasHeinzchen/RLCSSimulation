@@ -20,5 +20,13 @@ class Split:
 
             file.close()
 
-    def loadData(self):
+    def saveData(self):
         print()
+
+
+def initializeSplit(id):
+    id = id.split("_")
+    os.mkdir(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1])
+    file = open(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1] + "\\" + id[1] + ".json", "a")
+    file.write("{}")
+    file.close()

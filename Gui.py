@@ -92,7 +92,8 @@ class SeasonCreateWindow:
         seasonCreateWindow.title("Create Season")
 
         def create():
-            Season.addSeason()
+            #Season.addSeason()
+            EventHandler.initializeSeason()
 
             seasonCreateWindow.destroy()
 

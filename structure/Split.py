@@ -1,6 +1,7 @@
 import os
 import Globals
 import json
+import structure.Major as Major
 
 class Split:
     def __init__(self, id="", current=False, name=""):
@@ -32,7 +33,9 @@ def initializeSplit(id):
     file = open(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1] + "\\" + id[1] + ".json", "a")
     file.write("{}")
     file.close()
-    Split(id=id[0] + "_" + id[1]).saveData()
+    id = id[0] + "_" + id[1]
+    Split(id=id).saveData()
+    Major.initializeMajor(id + "_MJR")
 
 def getSplitById(id):
     split = Split(id=id)

@@ -1,4 +1,3 @@
-import os
 import Globals
 import json
 
@@ -7,6 +6,7 @@ class Major:
         self._id = id
         self._current = current
         self._name = name
+        self._teams = [] #seeded
         self._dict = {}
 
     def loadData(self):

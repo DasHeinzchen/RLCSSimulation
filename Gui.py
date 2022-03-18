@@ -52,6 +52,7 @@ class MainWindow:
     def __init__(self):
         mainWindow = tk.Tk()
         mainWindow.title("Main Window")
+        mainWindow.eval('tk::PlaceWindow . center')
 
         def openScoreWindow():
             ScoreWindow()
@@ -82,6 +83,7 @@ class SeasonOverviewWindow:
     def __init__(self):
         seasonOverviewWindow = tk.Tk()
         seasonOverviewWindow.title("Season Overview")
+        seasonOverviewWindow.eval('tk::PlaceWindow . center')
 
         seasonOverviewWindow.mainloop()
 
@@ -90,6 +92,7 @@ class SeasonCreateWindow:
     def __init__(self):
         seasonCreateWindow = tk.Tk()
         seasonCreateWindow.title("Create Season")
+        seasonCreateWindow.eval('tk::PlaceWindow . center')
 
         def create():
             #Season.addSeason()

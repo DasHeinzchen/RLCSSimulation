@@ -38,8 +38,12 @@ def initializeSplit(id):
     file.write("{}")
     file.close()
     id = id[0] + "_" + id[1]
-    Split(id=id).saveData()
-    Major.initializeMajor(id + "_MJR")
+    if id[-1:] == "1":
+        Split(id=id, current=True).saveData()
+        Major.initializeMajor(id + "_MJR", current=True)    #Put after if-statement when not first event of season
+    else:
+        Split(id=id).saveData()
+        Major.initializeMajor(id + "_MJR")                  #Put after if-statement when not first event of season
 
 def getSplitById(id):
     split = Split(id=id)

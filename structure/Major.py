@@ -39,7 +39,7 @@ class Major:
         self.saveData()
 
 
-def initializeMajor(id):
+def initializeMajor(id, current=False):
     id = id.split("_")
     file = open(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1] + "\\" + id[2] + ".json", "a")
     file.write("{}")
@@ -51,5 +51,5 @@ def initializeMajor(id):
     elif splitNbr == 3: format = "Spring_Format"
     id = id[0] + "_" + id[1] + "_" + id[2]
 
-    Major(id=id, formatType=format).saveData()
-    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id))
+    Major(id=id, formatType=format, current=current).saveData()
+    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current))

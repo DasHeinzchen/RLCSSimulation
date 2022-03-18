@@ -2,7 +2,7 @@ import tournament.BracketParts as Parts
 
 
 class SE8:
-    def __init__(self, id, variation, teams=[]):
+    def __init__(self, id, variation, teams=[], current=False):
         variations = {
             1: {
                 "qfbo": 7,
@@ -14,7 +14,7 @@ class SE8:
 
         self._id = id
         self._teams = teams
-        self._quarterFinals = Parts.QuarterFinals(id + "_QF", variations[variation]["qfbo"])
+        self._quarterFinals = Parts.QuarterFinals(id + "_QF", variations[variation]["qfbo"], current=current)
 
         self._dict = {
             "id": id,

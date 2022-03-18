@@ -2,10 +2,13 @@ from tournament import Games
 
 
 class QuarterFinals:
-    def __init__(self, id, bo):
+    def __init__(self, id, bo, current=False):
         self._id = id
         self._bestOf = bo
-        self._qf1 = Games.Series(id + "_1", bo)
+        if current:
+            self._qf1 = Games.Series(id + "_1", bo, current=True)
+        else:
+            self._qf1 = Games.Series(id + "_1", bo)
         self._qf2 = Games.Series(id + "_2", bo)
         self._qf3 = Games.Series(id + "_3", bo)
         self._qf4 = Games.Series(id + "_4", bo)

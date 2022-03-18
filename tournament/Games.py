@@ -1,10 +1,11 @@
 import Team
+import Globals
 
 
 class Match:
-    def __init__(self, id):
+    def __init__(self, id, current=False):
         self._id = id
-        self._current = False
+        self._current = current
         self._score1 = 0
         self._score2 = 0
         self._winner = 0
@@ -17,14 +18,16 @@ class Match:
             "winner": self._winner
         }
 
+        if current: Globals.current_match = self
+
     @property
     def dict(self):
         return self._dict
 
 
 class Series:
-    def __init__(self, id, bo):
-        self._current = False
+    def __init__(self, id, bo, current=False):
+        self._current = current
         self._id = id
         self._team1 = Team.placeholder
         self._team2 = Team.placeholder
@@ -33,7 +36,10 @@ class Series:
         self._matches = []
         matchDicts = {}
         for i in range(int((bo + 1) / 2)):
-            self._matches.append(Match(id + "_M" + str(i + 1)))
+            if self._current and i == 0:
+                self._matches.append(Match(id + "_M" + str(i + 1), current=self._current))
+            else:
+                self._matches.append(Match(id + "_M" + str(i + 1)))
             matchDicts.update({("Match" + str(i + 1)): self._matches[i].dict})
 
         self._dict = {
@@ -45,6 +51,8 @@ class Series:
             "score2": self._score2,
             "matches": matchDicts
         }
+
+        if current: Globals.current_series = self
 
     @property
     def dict(self):

@@ -28,7 +28,9 @@ class Season:
         list=[]
         for i in range(len(self._splits)):
             list.append({"id": self._splits[i]})
-        self._dict.update({"splits": list})
+        self._dict.update({
+            "splits": list
+        })
 
         file = open(Globals.settings["path"] + "seasons\\" + self._id + "\\" + self._id + ".json", "w")
         file.write(json.dumps(self._dict, indent=5))

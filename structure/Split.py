@@ -21,7 +21,11 @@ class Split:
         file.close()
 
     def saveData(self):
-        self._dict.update({"id": self._id, "current": self._current, "name": self._name})
+        self._dict.update({
+            "id": self._id,
+            "current": self._current,
+            "name": self._name
+        })
         file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[1] + ".json", "w")
         file.write(json.dumps(self._dict, indent=5))
         file.close()

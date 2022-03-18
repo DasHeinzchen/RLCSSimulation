@@ -17,16 +17,16 @@ class Format:
 
 
 class FallFormat(Format):
-    def __init__(self, teams=[]):
+    def __init__(self, id, teams=[]):
         super().__init__(teams=teams)
         self._type = "Fall_Format"
-        self._playoffs = Brackets.SE8(1)
+        self._playoffs = Brackets.SE8(id + "_PO", 1)
 
         super().updateDict({
             "playoffs": self._playoffs.dict
         })
 
-def initializeFormat(formatType):
+def initializeFormat(formatType, id):
     if formatType == "Fall_Format":
-        return FallFormat().dict
+        return FallFormat(id).dict
     else: return {}

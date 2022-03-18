@@ -293,6 +293,7 @@ asiaPacificSouthTeams = []
 asiaPacificSouthTeamsUnsorted = []
 subSaharanAfricanTeams = []
 subSaharanAfricanTeamsUnsorted = []
+placeholder = Team("TBD", "", "tbd")
 
 def readTeamsJson():
     with open(Globals.settings["path"] + "config\\teams.json") as teamsFile:

@@ -52,4 +52,4 @@ def initializeMajor(id):
     id = id[0] + "_" + id[1] + "_" + id[2]
 
     Major(id=id, formatType=format).saveData()
-    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format))
+    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id))

@@ -1,5 +1,6 @@
 import Globals
 import json
+import tournament.Formats as Formats
 
 class Major:
     def __init__(self, id="", current=False, name="", formatType=""):
@@ -20,6 +21,7 @@ class Major:
         self._formatType = self._dict["formatType"]
 
         file.close()
+        return self
 
     def saveData(self):
         self._dict.update({
@@ -31,6 +33,10 @@ class Major:
         file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[2] + ".json", "w")
         file.write(json.dumps(self._dict, indent=5))
         file.close()
+
+    def updateFormatDict(self, dict={}):
+        self._dict.update({"format": dict})
+        self.saveData()
 
 
 def initializeMajor(id):
@@ -44,4 +50,6 @@ def initializeMajor(id):
     elif splitNbr == 2: format = "Winter_Format"
     elif splitNbr == 3: format = "Spring_Format"
     id = id[0] + "_" + id[1] + "_" + id[2]
+
     Major(id=id, formatType=format).saveData()
+    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format))

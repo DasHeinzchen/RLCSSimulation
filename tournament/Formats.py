@@ -4,6 +4,8 @@ import tournament.Brackets as Brackets
 class Format:
     def __init__(self, teams=[]):
         self._teams = teams
+        self._currentBracket = None
+
         self._dict = {
             "teams": teams
         }
@@ -12,6 +14,14 @@ class Format:
         self._playedMatches = []
         self._seriesToPlay = []
         self._playedSeries = []
+
+    @property
+    def currentBracket(self):
+        return self._currentBracket
+
+    @currentBracket.setter
+    def currentBracket(self, bracket):
+        self._currentBracket = bracket
 
     @property
     def dict(self):
@@ -46,13 +56,14 @@ class FallFormat(Format):
         super().__init__(teams=teams)
         self._type = "Fall_Format"
         self._playoffs = Brackets.SE8(id + "_PO", 1, current=current)   #Put current just at first Bracket of Format
+        self.currentBracket = self._playoffs
 
-        super().updateDict({
+        self.updateDict({
             "playoffs": self._playoffs.dict
         })
 
-        super().appendMatchesToPlay(self._playoffs.matchesToPlay)
-        super().appendSeriesToPlay(self._playoffs.seriesToPlay)
+        self.appendMatchesToPlay(self._playoffs.matchesToPlay)
+        self.appendSeriesToPlay(self._playoffs.seriesToPlay)
 
 
 def initializeFormat(formatType, id, current=False):

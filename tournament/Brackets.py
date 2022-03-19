@@ -15,6 +15,7 @@ class SE8:
         self._id = id
         self._teams = teams
         self._quarterFinals = Parts.QuarterFinals(id + "_QF", variations[variation]["qfbo"], current=current)
+        self._currentPart = self._quarterFinals
 
         self._dict = {
             "id": id,

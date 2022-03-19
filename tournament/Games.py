@@ -24,6 +24,10 @@ class Match:
     def dict(self):
         return self._dict
 
+    @property
+    def id(self):
+        return self._id
+
 
 class Series:
     def __init__(self, id, bo, current=False):
@@ -33,14 +37,16 @@ class Series:
         self._team2 = Team.placeholder
         self._score1 = 0
         self._score2 = 0
-        self._matches = []
+        self._winner = 0
+        self._matchesToPlay = []
+        self._playedMatches = []
         matchDicts = {}
         for i in range(int((bo + 1) / 2)):
             if self._current and i == 0:
-                self._matches.append(Match(id + "_M" + str(i + 1), current=self._current))
+                self._matchesToPlay.append(Match(id + "_M" + str(i + 1), current=self._current))
             else:
-                self._matches.append(Match(id + "_M" + str(i + 1)))
-            matchDicts.update({("Match" + str(i + 1)): self._matches[i].dict})
+                self._matchesToPlay.append(Match(id + "_M" + str(i + 1)))
+            matchDicts.update({("Match" + str(i + 1)): self._matchesToPlay[i].dict})
 
         self._dict = {
             "id": self._id,
@@ -49,6 +55,7 @@ class Series:
             "team2": self._team2.id,
             "score1": self._score1,
             "score2": self._score2,
+            "winner": self._winner,
             "matches": matchDicts
         }
 
@@ -57,3 +64,7 @@ class Series:
     @property
     def dict(self):
         return self._dict
+
+    @property
+    def matchesToPlay(self):
+        return self._matchesToPlay

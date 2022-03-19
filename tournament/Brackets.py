@@ -22,6 +22,19 @@ class SE8:
             "quarterFinals": self._quarterFinals.dict
         }
 
+        self._matchesToPlay = self._quarterFinals.matchesToPlay     #Add more with '+ list'
+        self._playedMatches = []
+        self._seriesToPlay = self._quarterFinals.seriesToPlay
+        self._playedSeries = []
+
     @property
     def dict(self):
         return self._dict
+
+    @property
+    def matchesToPlay(self):
+        return self._matchesToPlay
+
+    @property
+    def seriesToPlay(self):
+        return self._seriesToPlay

@@ -2,25 +2,33 @@ from tournament import Games
 
 
 class QuarterFinals:
-    def __init__(self, id, bo, current=False):
-        self._id = id
-        self._bestOf = bo
-        if current:
-            self._qf1 = Games.Series(id + "_1", bo, current=True)
-        else:
-            self._qf1 = Games.Series(id + "_1", bo)
-        self._qf2 = Games.Series(id + "_2", bo)
-        self._qf3 = Games.Series(id + "_3", bo)
-        self._qf4 = Games.Series(id + "_4", bo)
+    def __init__(self, partId="", bo=0, current=False, dict={}):
+        if dict == {}:
+            self._id = partId
+            self._bestOf = bo
+            if current:
+                self._qf1 = Games.Series(seriesId=partId + "_1", bo=bo, current=True)
+            else:
+                self._qf1 = Games.Series(seriesId=partId + "_1", bo=bo)
+            self._qf2 = Games.Series(seriesId=partId + "_2", bo=bo)
+            self._qf3 = Games.Series(seriesId=partId + "_3", bo=bo)
+            self._qf4 = Games.Series(seriesId=partId + "_4", bo=bo)
 
-        self._dict = {
-            "id": self._id,
-            "bestOf": self._bestOf,
-            "qf1": self._qf1.dict,
-            "qf2": self._qf2.dict,
-            "qf3": self._qf3.dict,
-            "qf4": self._qf4.dict
-        }
+            self._dict = {
+                "id": self._id,
+                "bestOf": self._bestOf,
+                "qf1": self._qf1.dict,
+                "qf2": self._qf2.dict,
+                "qf3": self._qf3.dict,
+                "qf4": self._qf4.dict
+            }
+        else:
+            self._dict = dict
+            self._qf1 = Games.Series(dict=dict["qf1"])
+            self._qf2 = Games.Series(dict=dict["qf2"])
+            self._qf3 = Games.Series(dict=dict["qf3"])
+            self._qf4 = Games.Series(dict=dict["qf4"])
+            self.loadFromDict()
 
         self._matchesToPlay = []
         self._playedMatches = []
@@ -30,6 +38,10 @@ class QuarterFinals:
         for series in self._seriesToPlay:
             for match in series.matchesToPlay:
                 self._matchesToPlay.append(match)
+
+    def loadFromDict(self):
+        self._id = self._dict["id"]
+        self._bestOf = self._dict["bestOf"]
 
     @property
     def dict(self):

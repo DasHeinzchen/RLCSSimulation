@@ -11,10 +11,12 @@ class ScoreWindow:
         scoreWindow.title("Score Window")
         scoreWindow.eval('tk::PlaceWindow . center')
 
-        team1Txt = "Team 1 Score:\n" + Globals.current_match.team1.name
-        team2Txt = "Team 2 Score:\n" + Globals.current_match.team2.name
-        team1Lbl = tk.Label(scoreWindow, text=team1Txt)
-        team2Lbl = tk.Label(scoreWindow, text=team2Txt)
+        team1Lbl = tk.Label(scoreWindow, text=Globals.current_series.team1.name)
+        team2Lbl = tk.Label(scoreWindow, text=Globals.current_series.team2.name)
+        seriesScoreLblMid = tk.Label(scoreWindow, text="Series Score")
+        seriesScoreLblT1 = tk.Label(scoreWindow, text=str(Globals.current_series.score1))
+        seriesScoreLblT2 = tk.Label(scoreWindow, text=str(Globals.current_series.score2))
+        enterScoreLbl = tk.Label(scoreWindow, text="Enter match score")
         team1Entry = tk.Entry(scoreWindow)
         team2Entry = tk.Entry(scoreWindow)
 
@@ -25,11 +27,11 @@ class ScoreWindow:
                 if int(team1Entry.get()) is not int(team2Entry.get()):
                     score = (int(team1Entry.get()), int(team2Entry.get()))
                     print("Score :" + str(score))
-                    EventHandler.addMatchScore(score)
+                    #EventHandler.addMatchScore(score)
 
-                    print("Winner: " + str(Globals.current_match.winner))
-                    print("Series Score: " + str(Globals.current_series.score))
-                    print()
+                    #print("Winner: " + str(Globals.current_match.winner))
+                    #print("Series Score: " + str(Globals.current_series.score))
+                    #print()
 
                     scoreWindow.destroy()
                 else:
@@ -41,9 +43,13 @@ class ScoreWindow:
 
         team1Lbl.grid(row=0, column=0)
         team2Lbl.grid(row=0, column=2)
-        team1Entry.grid(row=1, column=0)
-        team2Entry.grid(row=1, column=2)
-        cnfrmBtn.grid(row=2, column=1)
+        seriesScoreLblMid.grid(row=1, column=1)
+        seriesScoreLblT1.grid(row=1, column=0)
+        seriesScoreLblT2.grid(row=1, column=2)
+        enterScoreLbl.grid(row=2, column=1)
+        team1Entry.grid(row=2, column=0)
+        team2Entry.grid(row=2, column=2)
+        cnfrmBtn.grid(row=3, column=1)
 
         scoreWindow.mainloop()
 

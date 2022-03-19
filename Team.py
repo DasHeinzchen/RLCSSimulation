@@ -376,3 +376,39 @@ def saveAllTeamData():
 
     for team in subSaharanAfricanTeams:
         team.saveData()
+
+def getTeamById(teamId):
+    if teamId == placeholder.id:
+        return placeholder
+    elif teamId.split("_")[0] == "EU":
+        for team in europeanTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "NA":
+        for team in northAmericanTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "OCE":
+        for team in oceanicTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "SAM":
+        for team in southAmericanTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "MENA":
+        for team in middleEastNorthAfricanTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "APACN":
+        for team in asiaPacificNorthTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "APACS":
+        for team in asiaPacificSouthTeams:
+            if team.id == teamId:
+                return team
+    elif teamId.split("_")[0] == "SSA":
+        for team in subSaharanAfricanTeams:
+            if team.id == teamId:
+                return team

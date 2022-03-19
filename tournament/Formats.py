@@ -34,6 +34,10 @@ class Format:
     def teams(self):
         return self._teams
 
+    @teams.setter
+    def teams(self, teams):
+        self._teams = teams
+
     @property
     def matchesToPlay(self):
         return self._matchesToPlay
@@ -52,21 +56,37 @@ class Format:
 
 
 class FallFormat(Format):
-    def __init__(self, id, teams=[], current=False):
-        super().__init__(teams=teams)
-        self._type = "Fall_Format"
-        self._playoffs = Brackets.SE8(id + "_PO", 1, current=current)   #Put current just at first Bracket of Format
-        self.currentBracket = self._playoffs
+    def __init__(self, formatId="", teams=[], current=False, dict={}):
+        if dict == {}:
+            super().__init__(teams=teams)
+            self._type = "Fall_Format"
+            self._playoffs = Brackets.SE8(bracketId=formatId + "_PO", variation=1, current=current)   #Put current just at first Bracket of Format
+            self._currentBracket = self._playoffs
 
-        self.updateDict({
-            "playoffs": self._playoffs.dict
-        })
+            self.updateDict({
+                "currentBracket": self._currentBracket.id,
+                "playoffs": self._playoffs.dict
+            })
+        else:
+            super().__init__()
+            self.updateDict(dict)
+            self._playoffs = Brackets.SE8(dict=dict["playoffs"])
+            self.loadFromDict()
 
         self.appendMatchesToPlay(self._playoffs.matchesToPlay)
         self.appendSeriesToPlay(self._playoffs.seriesToPlay)
 
+    def loadFromDict(self):
+        self._currentBracket = self.dict["currentBracket"]
+        self.teams = self.dict["teams"]
 
-def initializeFormat(formatType, id, current=False):
+
+def initializeFormat(formatType, formatId, current=False):
     if formatType == "Fall_Format":
-        return FallFormat(id, current=current).dict
+        return FallFormat(formatId=formatId, current=current).dict
     else: return {}
+
+
+def loadFormat(dict, formatType):
+    if formatType == "Fall_Format":
+        return FallFormat(dict=dict)

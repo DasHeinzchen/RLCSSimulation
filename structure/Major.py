@@ -38,6 +38,14 @@ class Major:
         self._dict.update({"format": dict})
         self.saveData()
 
+    @property
+    def dict(self):
+        return self._dict
+
+    @property
+    def formatType(self):
+        return self._formatType
+
 
 def initializeMajor(id, current=False):
     id = id.split("_")
@@ -53,3 +61,6 @@ def initializeMajor(id, current=False):
 
     Major(id=id, formatType=format, current=current).saveData()
     Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current))
+
+def getMajorById(id):
+    return Major(id=id).loadData()

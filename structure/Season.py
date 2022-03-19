@@ -82,6 +82,7 @@ def addSeason():
 
         id = "S" + str(len(seasonsJson["seasons"]) + 1)
         newSeason = Season(id=id, current=True)
+        Globals.current_season = id
 
         for i in range(3):
             newSeason.addSplitId(i, id + "_SPL" + str(i + 1))

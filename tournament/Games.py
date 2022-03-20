@@ -3,10 +3,9 @@ import Globals
 
 
 class Match:
-    def __init__(self, id="", current=False, dict={}):
+    def __init__(self, id="", dict={}):
         if dict == {}:
             self._id = id
-            self._current = current
             self._finished = False
             self._score1 = 0
             self._score2 = 0
@@ -19,7 +18,6 @@ class Match:
 
     def loadFromDict(self):
         self._id = self._dict["id"]
-        self._current = self._dict["current"]
         self._finished = self._dict["finished"]
         self._score1 = self._dict["score1"]
         self._score2 = self._dict["score2"]
@@ -28,7 +26,6 @@ class Match:
     def saveMatch(self):
         self._dict = {
             "id": self._id,
-            "current": self._current,
             "finished": self._finished,
             "score1": self._score1,
             "score2": self._score2,
@@ -93,10 +90,7 @@ class Series:
             self._playedMatches = []
             self._matchDicts = {}
             for i in range(int((self._bestOf + 1) / 2)):
-                if self._current and i == 0:
-                    self._matchesToPlay.append(Match(id=self._id + "_M" + str(i + 1), current=self._current))
-                else:
-                    self._matchesToPlay.append(Match(id=self._id + "_M" + str(i + 1)))
+                self._matchesToPlay.append(Match(id=self._id + "_M" + str(i + 1)))
                 self._matchDicts.update({("Match" + str(i + 1)): self._matchesToPlay[i].dict})
 
             self.toDict()

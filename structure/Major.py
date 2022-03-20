@@ -23,14 +23,15 @@ class Major:
         file.close()
         return self
 
-    def saveData(self):
+    def saveData(self, initialize=False):
         self._dict.update({
             "id": self._id,
             "current": self._current,
             "name": self._name,
-            "formatType": self._formatType,
-            "format": Globals.format.dict
+            "formatType": self._formatType
         })
+        if not initialize:
+            self._dict.update({"format": Globals.format.dict})
         file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[2] + ".json", "w")
         file.write(json.dumps(self._dict, indent=5))
         file.close()
@@ -60,7 +61,7 @@ def initializeMajor(id, current=False):
     elif splitNbr == 3: format = "Spring_Format"
     id = id[0] + "_" + id[1] + "_" + id[2]
 
-    Major(id=id, formatType=format, current=current).saveData()
+    Major(id=id, formatType=format, current=current).saveData(initialize=True)
     Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current))
 
 def getMajorById(id):

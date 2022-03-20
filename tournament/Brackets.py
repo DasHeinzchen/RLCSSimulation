@@ -37,6 +37,10 @@ class SE8:
         self._id = self._dict["id"]
         self._teams = self._dict["teams"]
 
+    def saveBracket(self):
+        self._dict.update({"quarterfinals": self._quarterFinals.savePart()})
+        return self._dict
+
     @property
     def dict(self):
         return self._dict

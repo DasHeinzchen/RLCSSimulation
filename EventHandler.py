@@ -1,20 +1,23 @@
 import Globals
 import Team
-import structure.Season as Season
+from structure import Season, Split, Major
 
 
-def addMatchScore(score):
-    Globals.current_match.score = score
-    Globals.current_series.addMatch(Globals.current_match)
-
-
-def seriesFinished():
-    print()
+def matchFinished():
+    Globals.format.saveFormat()
 
 
 def close():
     Team.saveAllTeamData()
     Season.getSeasonById(Globals.current_season).saveData()
+    split = Split.getSplitById(Globals.current_split)
+    split.saveData()
+
+    eventId = split.currentEvent
+    eventId = eventId.split("_")
+    if eventId[2] == "MJR":
+        event = Major.getMajorById(eventId[0] + "_" + eventId[1] + "_" + eventId[2])
+        event.saveData()
 
 
 def initializeSeason():

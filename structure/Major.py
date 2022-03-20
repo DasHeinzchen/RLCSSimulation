@@ -28,7 +28,8 @@ class Major:
             "id": self._id,
             "current": self._current,
             "name": self._name,
-            "formatType": self._formatType
+            "formatType": self._formatType,
+            "format": Globals.format.dict
         })
         file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[2] + ".json", "w")
         file.write(json.dumps(self._dict, indent=5))

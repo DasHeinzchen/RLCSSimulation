@@ -3,7 +3,6 @@ from tkinter import ttk
 
 import EventHandler
 import Globals
-import structure.Season as Season
 
 class ScoreWindow:
     def __init__(self):
@@ -21,17 +20,10 @@ class ScoreWindow:
         team2Entry = tk.Entry(scoreWindow)
 
         def submit():
-            print("Entry1: " + team1Entry.get())
-            print("Entry2: " + team2Entry.get())
             if team1Entry.get().isdigit() and team2Entry.get().isdigit():
                 if int(team1Entry.get()) is not int(team2Entry.get()):
-                    score = (int(team1Entry.get()), int(team2Entry.get()))
-                    print("Score :" + str(score))
-                    #EventHandler.addMatchScore(score)
-
-                    #print("Winner: " + str(Globals.current_match.winner))
-                    #print("Series Score: " + str(Globals.current_series.score))
-                    #print()
+                    Globals.current_series.submitScore(int(team1Entry.get()), int(team2Entry.get()))
+                    EventHandler.matchFinished()
 
                     scoreWindow.destroy()
                 else:

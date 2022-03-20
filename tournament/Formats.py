@@ -1,4 +1,5 @@
 import tournament.Brackets as Brackets
+import Globals
 
 
 class Format:
@@ -80,10 +81,15 @@ class FallFormat(Format):
         self._currentBracket = self.dict["currentBracket"]
         self.teams = self.dict["teams"]
 
+    def saveFormat(self):
+        self.updateDict({"playoffs": self._playoffs.saveBracket()})
+        return self.dict
+
 
 def initializeFormat(formatType, formatId, current=False):
     if formatType == "Fall_Format":
-        return FallFormat(formatId=formatId, current=current).dict
+        Globals.format = FallFormat(formatId=formatId, current=current)
+        return Globals.format.dict
     else: return {}
 
 

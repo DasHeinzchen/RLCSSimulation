@@ -22,7 +22,7 @@ if not Globals.current_season == "":
             eventId = eventId.split("_")
             if eventId[2] == "MJR":
                 event = Major.getMajorById(eventId[0] + "_" + eventId[1] + "_" + eventId[2])
-                format = Formats.loadFormat(event.dict["format"], event.formatType)
+                Globals.format = Formats.loadFormat(event.dict["format"], event.formatType)
 
         del split
 

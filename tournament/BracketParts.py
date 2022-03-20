@@ -22,6 +22,7 @@ class QuarterFinals:
                 "qf3": self._qf3.dict,
                 "qf4": self._qf4.dict
             }
+
         else:
             self._dict = dict
             self._qf1 = Games.Series(dict=dict["qf1"])
@@ -36,12 +37,25 @@ class QuarterFinals:
         self._playedSeries = []
 
         for series in self._seriesToPlay:
-            for match in series.matchesToPlay:
-                self._matchesToPlay.append(match)
+            if series.finished:
+                self._playedSeries.append(self._seriesToPlay.pop(0))
+                for match in series.playedMatches:
+                    self._playedMatches.append(match)
+            else:
+                for match in series.matchesToPlay:
+                    if match.finished:
+                        self._playedMatches.append(match)
+                    else:
+                        self._matchesToPlay.append(match)
 
     def loadFromDict(self):
         self._id = self._dict["id"]
         self._bestOf = self._dict["bestOf"]
+
+    def savePart(self):
+        self._dict.update({"qf1": self._qf1.saveSeries(), "qf2": self._qf2.saveSeries(), "qf3": self._qf3.saveSeries(),
+                           "qf4": self._qf4.saveSeries()})
+        return self._dict
 
     @property
     def dict(self):

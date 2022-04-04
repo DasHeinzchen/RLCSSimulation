@@ -1,5 +1,7 @@
 import Globals
 import json
+
+import Team
 import tournament.Formats as Formats
 
 class Major:
@@ -62,7 +64,7 @@ def initializeMajor(id, current=False):
     id = id[0] + "_" + id[1] + "_" + id[2]
 
     Major(id=id, formatType=format, current=current).saveData(initialize=True)
-    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current))
+    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current, teams=Team.europeanTeams))
 
 def getMajorById(id):
     return Major(id=id).loadData()

@@ -75,14 +75,18 @@ class Match:
 
 
 class Series:
-    def __init__(self, seriesId="", bo=0, current=False, dict={}):
+    def __init__(self, seriesId="", bo=0, current=False, dict={}, teams=[]):
         if dict == {}:
             self._current = current
             self._finished = False
             self._id = seriesId
             self._bestOf = bo
-            self._team1 = Team.placeholder
-            self._team2 = Team.placeholder
+            if teams == []:
+                self._team1 = Team.placeholder
+                self._team2 = Team.placeholder
+            else:
+                self._team1 = teams[0]
+                self._team2 = teams[1]
             self._score1 = 0
             self._score2 = 0
             self._winner = 0
@@ -179,9 +183,17 @@ class Series:
     def team1(self):
         return self._team1
 
+    @team1.setter
+    def team1(self, team):
+        self._team1 = team
+
     @property
     def team2(self):
         return self._team2
+
+    @team2.setter
+    def team2(self, team):
+        self._team2 = team
 
     @property
     def score1(self):
@@ -210,3 +222,15 @@ class Series:
     @property
     def finished(self):
         return self._finished
+
+    @finished.setter
+    def finished(self, finished):
+        self._finished = finished
+
+    @property
+    def current(self):
+        return self._current
+
+    @current.setter
+    def current(self, current):
+        self._current = current

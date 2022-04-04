@@ -1,5 +1,5 @@
 import tournament.Brackets as Brackets
-import Globals
+import Globals, Team
 
 
 class Format:
@@ -8,7 +8,7 @@ class Format:
         self._currentBracket = None
 
         self._dict = {
-            "teams": teams
+            "teams": self.teamIds()
         }
 
         self._matchesToPlay = []
@@ -39,6 +39,16 @@ class Format:
     def teams(self, teams):
         self._teams = teams
 
+    def teamIds(self):
+        teamIds = []
+        for team in self._teams:
+            teamIds.append(team.id)
+        return teamIds
+
+    def teamsFromIds(self, ids):
+        for teamId in ids:
+            self._teams.append(Team.getTeamById(teamId))
+
     @property
     def matchesToPlay(self):
         return self._matchesToPlay
@@ -61,7 +71,7 @@ class FallFormat(Format):
         if dict == {}:
             super().__init__(teams=teams)
             self._type = "Fall_Format"
-            self._playoffs = Brackets.SE8(bracketId=formatId + "_PO", variation=1, current=current)   #Put current just at first Bracket of Format
+            self._playoffs = Brackets.SE8(bracketId=formatId + "_PO", variation=1, current=current, teams=teams)   #Put current just at first Bracket of Format
             self._currentBracket = self._playoffs
 
             self.updateDict({
@@ -79,16 +89,16 @@ class FallFormat(Format):
 
     def loadFromDict(self):
         self._currentBracket = self.dict["currentBracket"]
-        self.teams = self.dict["teams"]
+        self.teamsFromIds(self.dict["teams"])
 
     def saveFormat(self):
         self.updateDict({"playoffs": self._playoffs.saveBracket()})
         return self.dict
 
 
-def initializeFormat(formatType, formatId, current=False):
+def initializeFormat(formatType, formatId, current=False, teams=[]):
     if formatType == "Fall_Format":
-        Globals.format = FallFormat(formatId=formatId, current=current)
+        Globals.format = FallFormat(formatId=formatId, current=current, teams=teams)
         return Globals.format.dict
     else: return {}
 

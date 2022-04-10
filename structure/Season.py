@@ -4,40 +4,30 @@ import os
 import structure.Split as Split
 
 class Season:
-    def __init__(self, id="", current=False):
-        self._dict = {}
-        self._id = id
-        self._current = current
-        self._splits = ["", "", ""]
+    def __init__(self, seasonId):
+        self._id = seasonId
+        self._current = False
+        self._currentSplit = ""
+
+        self.loadData()
 
     def loadData(self):
-        if not os.path.isfile(Globals.settings["path"] + "seasons\\" + self._id + "\\" + self._id + ".json"):
-            file = open(Globals.settings["path"] + "seasons\\" + self._id + "\\" + self._id + ".json", "a")
-            file.write("{}")
-            file.close()
-        else:
-            file = open(Globals.settings["path"] + "seasons\\" + self._id + "\\" + self._id + ".json")
-            self._dict = json.load(file)
+        with open(Globals.settings["path"] + "seasons\\" + self._id + "\\season.json", "r") as seasonFile:
+            dictionary = json.load(seasonFile)
 
-            for i in range(len(self._dict["splits"])):
-                self._splits[i] = self._dict["splits"][i]["id"]
-            file.close()
+            self._current = dictionary["current"]
+            self._currentSplit = dictionary["currentSplit"]
+
+        return self
 
     def saveData(self):
-        # Loading Values to dict
-        list=[]
-        for i in range(len(self._splits)):
-            list.append({"id": self._splits[i]})
-        self._dict.update({
-            "splits": list
-        })
+        with open(Globals.settings["path"] + "seasons\\" + self._id + "\\season.json", "w") as seasonFile:
+            dictionary = {
+                "current": self._current,
+                "currentSplit": self._currentSplit
+            }
 
-        file = open(Globals.settings["path"] + "seasons\\" + self._id + "\\" + self._id + ".json", "w")
-        file.write(json.dumps(self._dict, indent=5))
-        file.close()
-
-    def addSplitId(self, i, splitId):
-        self._splits[i] = splitId
+            seasonFile.write(json.dumps(dictionary, indent=5))
 
     @property
     def id(self):
@@ -48,30 +38,26 @@ class Season:
         return self._current
 
     @property
-    def splits(self):
-        return self._splits
+    def currentSplit(self):
+        return self._currentSplit
 
 
 def readSeasonsJson():
     with open(Globals.settings["path"] + "seasons\\seasons.json") as seasonsFile:
         seasonsJson = json.load(seasonsFile)
-        for season in seasonsJson["seasons"]:
-            try:
-                os.mkdir(Globals.settings["path"] + "seasons\\" + season["id"])
-            except:
-                print("season directory vorhanden")
 
+        for season in seasonsJson["seasons"]:
             if season["current"]:
                 Globals.current_season = season["id"]
 
-                break
-
         seasonsFile.close()
 
+
 def getSeasonById(id):
-    season = Season(id=id)
+    season = Season(id)
     season.loadData()
     return season
+
 
 def initializeSeason(seasonId):
     with open(Globals.settings["path"] + "seasons\\" + seasonId + "\\season.json", "w") as seasonFile:
@@ -80,6 +66,7 @@ def initializeSeason(seasonId):
             "currentSplit": seasonId + "_SPL1"
         }
         seasonFile.write(json.dumps(dict, indent=5))
+
 
 def setupSeason():
     seasonId = "S"

@@ -4,34 +4,34 @@ import json
 import structure.Major as Major
 
 class Split:
-    def __init__(self, id="", current=False, currentEvent="", name=""):
-        self._dict = {}
+    def __init__(self, id):
         self._id = id
-        self._current = current
-        self._currentEvent = currentEvent
-        self._name = name
+        self._current = False
+        self._currentEvent = ""
+        self._name = ""
+
+        self.loadData()
 
     def loadData(self):
-        file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[1] + ".json")
-        self._dict = json.load(file)
+        ids = self._id.split("_")
+        with open(Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\split.json", "r") as splitFile:
+            dictionary = json.load(splitFile)
+            self._current = dictionary["current"]
+            self._currentEvent = dictionary["currentEvent"]
+            self._name = dictionary["name"]
 
-        self._id = self._dict["id"]
-        self._current = self._dict["current"]
-        self._currentEvent = self._dict["currentEvent"]
-        self._name = self._dict["name"]
-
-        file.close()
+        return self
 
     def saveData(self):
-        self._dict.update({
-            "id": self._id,
-            "current": self._current,
-            "currentEvent": self._currentEvent,
-            "name": self._name
-        })
-        file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[1] + ".json", "w")
-        file.write(json.dumps(self._dict, indent=5))
-        file.close()
+        ids = self._id.split("_")
+        with open(Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\split.json", "w") as splitFile:
+            dictionary = {
+                "current": self._current,
+                "currentEvent": self._currentEvent,
+                "name": self._name
+            }
+
+            splitFile.write(json.dumps(dictionary, indent=5))
 
     @property
     def current(self):
@@ -46,7 +46,7 @@ def initializeSplit(splitId, path):
     with open(path, "w") as splitFile:
         dict = {
             "current": False,
-            "currnetEvent": splitId + "_MJR",                   #TODO change to actual first event
+            "currentEvent": splitId + "_MJR",                   #TODO change to actual first event
             "name": "Split"
         }
         if splitId[-1] == "1":

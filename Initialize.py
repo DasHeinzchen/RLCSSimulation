@@ -13,17 +13,14 @@ Team.readTeamsJson()
 Season.readSeasonsJson()
 if not Globals.current_season == "":
     season = Season.getSeasonById(Globals.current_season)
-    for splitId in season.splits:
-        split = Split.getSplitById(splitId)
-        if split.current:
-            Globals.current_split = splitId
+    split = Split.getSplitById(season.currentSplit)
+    Globals.current_split = season.currentSplit
+    eventId = split.currentEvent
+    eventId = eventId.split("_")
+    if eventId[2] == "MJR":
+        event = Major.getMajorById(eventId[0] + "_" + eventId[1] + "_" + eventId[2])
+        #Globals.format = Formats.loadFormat(event.dict["format"], event.formatType)
 
-            eventId = split.currentEvent
-            eventId = eventId.split("_")
-            if eventId[2] == "MJR":
-                event = Major.getMajorById(eventId[0] + "_" + eventId[1] + "_" + eventId[2])
-                Globals.format = Formats.loadFormat(event.dict["format"], event.formatType)
-
-        del split
+    del split
 
 window = Gui.MainWindow()

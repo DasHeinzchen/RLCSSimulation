@@ -5,46 +5,40 @@ import Team
 import tournament.Formats as Formats
 
 class Major:
-    def __init__(self, id="", current=False, name="", formatType=""):
+    def __init__(self, id):
         self._id = id
-        self._current = current
-        self._name = name
+        self._current = False
+        self._name = ""
         self._teams = [] #seeded
-        self._formatType = formatType
-        self._dict = {}
+        self._formatType = ""
+
+        self.loadData()
 
     def loadData(self):
-        file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[2] + ".json")
-        self._dict = json.load(file)
-
-        self._id = self._dict["id"]
-        self._current = self._dict["current"]
-        self._name = self._dict["name"]
-        self._formatType = self._dict["formatType"]
-
-        file.close()
+        ids = self._id.split("_")
+        with open(Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\MJR.json", "r") as majorFile:
+            dictionary = json.load(majorFile)
+            self._current = dictionary["current"]
+            self._name = dictionary["name"]
+            self._formatType = dictionary["formatType"]
+            for team in dictionary["teams"]:
+                self._teams.append(Team.getTeamById(team))
         return self
 
-    def saveData(self, initialize=False):
-        self._dict.update({
-            "id": self._id,
-            "current": self._current,
-            "name": self._name,
-            "formatType": self._formatType
-        })
-        if not initialize:
-            self._dict.update({"format": Globals.format.dict})
-        file = open(Globals.settings["path"] + "seasons\\" + self._id.split("_")[0] + "\\" + self._id.split("_")[1] + "\\" + self._id.split("_")[2] + ".json", "w")
-        file.write(json.dumps(self._dict, indent=5))
-        file.close()
+    def saveData(self):
+        ids = self._id.split("_")
+        with open(Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\MJR.json", "w") as majorFile:
+            teamStrings = []
+            for team in self._teams:
+                teamStrings.append(team.id)
+            dictionary = {
+                "current": self._current,
+                "formatType": self._formatType,
+                "name": self._name,
+                "teams": teamStrings
+            }
 
-    def updateFormatDict(self, dict={}):
-        self._dict.update({"format": dict})
-        self.saveData()
-
-    @property
-    def dict(self):
-        return self._dict
+            majorFile.write(json.dumps(dictionary, indent=5))
 
     @property
     def formatType(self):
@@ -57,6 +51,7 @@ def initializeMajor(majorId, path):
             "current": True,                    #TODO change to false when not first split event
             "formatType": "",
             "name": "Major",
+            "teams": [],
             "format": {}
         }
         if majorId.split("_")[1][-1] == "1":

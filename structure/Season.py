@@ -73,27 +73,35 @@ def getSeasonById(id):
     season.loadData()
     return season
 
-def addSeason():
-    newSeason = None
+def initializeSeason(seasonId):
+    with open(Globals.settings["path"] + "seasons\\" + seasonId + "\\season.json", "w") as seasonFile:
+        dict = {
+            "current": True,
+            "currentSplit": seasonId + "_SPL1"
+        }
+        seasonFile.write(json.dumps(dict, indent=5))
+
+def setupSeason():
+    seasonId = "S"
     with open(Globals.settings["path"] + "seasons\\seasons.json") as seasonsFile:
         seasonsJson = json.load(seasonsFile)
         for season in seasonsJson["seasons"]:
             season["current"] = False
 
-        id = "S" + str(len(seasonsJson["seasons"]) + 1)
-        newSeason = Season(id=id, current=True)
-        Globals.current_season = id
-
-        for i in range(3):
-            newSeason.addSplitId(i, id + "_SPL" + str(i + 1))
-
-        seasonsJson["seasons"].append({"id": newSeason.id, "current": True})
-        file = open(Globals.settings["path"] + "seasons\\seasons.json", "w")
-        file.write(json.dumps(seasonsJson, indent=5))
-        file.close()
+        seasonId += str(len(seasonsJson["seasons"]) + 1)
+        seasonsJson["seasons"].append({"id": seasonId, "current": True})
         seasonsFile.close()
 
-    readSeasonsJson()
-    newSeason.saveData()
-    for i in range(3):
-        Split.initializeSplit(newSeason.splits[i])
+        with open(Globals.settings["path"] + "seasons\\seasons.json", "w") as seasonsFile:
+            seasonsFile.write(json.dumps(seasonsJson, indent=5))
+            seasonsFile.close()
+
+    try:
+        os.mkdir(Globals.settings["path"] + "seasons\\" + seasonId)
+    except OSError:
+        print("Creation of the Season directory failed")
+    else:
+        open(Globals.settings["path"] + "seasons\\" + seasonId + "\\season.json", "a").close()
+        Split.setupSplits(seasonId)
+
+    initializeSeason(seasonId)

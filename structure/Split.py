@@ -42,22 +42,43 @@ class Split:
         return self._currentEvent
 
 
-def initializeSplit(id):
-    id = id.split("_")
-    os.mkdir(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1])
-    file = open(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1] + "\\" + id[1] + ".json", "a")
-    file.write("{}")
-    file.close()
-    id = id[0] + "_" + id[1]
-    if id[-1:] == "1":
-        Split(id=id, current=True, currentEvent=id + "_MJR").saveData()             #Put in id of first event of split
-        Globals.current_split = id
-    else:
-        Split(id=id, currentEvent=id + "_MJR").saveData()                           #Put in id of first event of split
+def initializeSplit(splitId, path):
+    with open(path, "w") as splitFile:
+        dict = {
+            "current": False,
+            "currnetEvent": splitId + "_MJR",                   #TODO change to actual first event
+            "name": "Split"
+        }
+        if splitId[-1] == "1":
+            dict["current"] = True
+            dict["name"] = "Fall Split"
+        elif splitId[-1] == "2": dict["name"] = "Winter Split"
+        elif splitId[-1] == "3": dict["name"] = "Spring Split"
 
-    Major.initializeMajor(id + "_MJR", current=True)        #Put first event of Split with 'current=True'
+        splitFile.write(json.dumps(dict, indent=5))
 
 def getSplitById(id):
     split = Split(id=id)
     split.loadData()
     return split
+
+def setupSplits(seasonId):
+    path = Globals.settings["path"] + "seasons\\" + seasonId + "\\SPL"
+    for i in range(3):
+        try:
+            os.mkdir(path + str(i + 1))
+        except OSError:
+            print("Creation of the Split directory failed")
+        else:
+            open(path + str(i + 1) + "\\split.json", "a").close()
+            splitId = seasonId + "_SPL" + str(i + 1)
+            Major.setupMajor(splitId)
+            for region in Globals.regions:
+                try:
+                    os.mkdir(path + str(i + 1) + "\\" + region)
+                except OSError:
+                    print("Creation of the region directory failed")
+                else:
+                    open(path + str(i + 1) + "\\" + region + "\\rankings.json", "a").close()
+
+            initializeSplit(splitId, path + str(i + 1) + "\\split.json")

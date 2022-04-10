@@ -21,4 +21,4 @@ def close():
 
 
 def initializeSeason():
-    Season.addSeason()
+    Season.setupSeason()

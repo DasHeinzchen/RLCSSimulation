@@ -51,20 +51,35 @@ class Major:
         return self._formatType
 
 
-def initializeMajor(id, current=False):
-    id = id.split("_")
-    file = open(Globals.settings["path"] + "seasons\\" + id[0] + "\\" + id[1] + "\\" + id[2] + ".json", "a")
-    file.write("{}")
-    file.close()
-    splitNbr = int(id[1][3:])
-    format = ""
-    if splitNbr == 1: format = "Fall_Format"
-    elif splitNbr == 2: format = "Winter_Format"
-    elif splitNbr == 3: format = "Spring_Format"
-    id = id[0] + "_" + id[1] + "_" + id[2]
+def initializeMajor(majorId, path):
+    with open(path, "w") as majorFile:
+        dict = {
+            "current": True,                    #TODO change to false when not first split event
+            "formatType": "",
+            "name": "Major",
+            "format": {}
+        }
+        if majorId.split("_")[1][-1] == "1":
+            dict["formatType"] = "Fall_Format"
+            dict["name"] = "Fall Major"
+        elif majorId.split("_")[1][-1] == "2":
+            dict["formatType"] = "Winter_Format"
+            dict["name"] = "Winter Major"
+        elif majorId.split("_")[1][-1] == "3":
+            dict["formatType"] = "Spring_Format"
+            dict["name"] = "Spring Major"
 
-    Major(id=id, formatType=format, current=current).saveData(initialize=True)
-    Major(id=id).loadData().updateFormatDict(dict=Formats.initializeFormat(format, id, current=current, teams=Team.europeanTeams))
+        dict["format"] = Formats.initializeFormat(dict["formatType"], majorId, current=dict["current"])
+
+        majorFile.write(json.dumps(dict, indent=5))
 
 def getMajorById(id):
     return Major(id=id).loadData()
+
+def setupMajor(splitId):
+    majorId = splitId + "_MJR"
+    ids = splitId.split("_")
+    path = Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\MJR.json"
+    open(path, "a").close()
+
+    initializeMajor(majorId, path)

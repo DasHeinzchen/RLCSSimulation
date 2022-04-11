@@ -9,8 +9,9 @@ def matchFinished():
 
 def close():
     Team.saveAllTeamData()
-    Season.getSeasonById(Globals.current_season).saveData()
-    split = Split.getSplitById(Globals.current_split)
+    season = Season.getSeasonById(Globals.current_season)
+    season.saveData()
+    split = Split.getSplitById(season.currentSplit)
     split.saveData()
 
     eventId = split.currentEvent

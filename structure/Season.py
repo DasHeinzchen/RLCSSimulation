@@ -54,9 +54,7 @@ def readSeasonsJson():
 
 
 def getSeasonById(id):
-    season = Season(id)
-    season.loadData()
-    return season
+    return Season(id)
 
 
 def initializeSeason(seasonId):
@@ -66,6 +64,8 @@ def initializeSeason(seasonId):
             "currentSplit": seasonId + "_SPL1"
         }
         seasonFile.write(json.dumps(dict, indent=5))
+
+    Globals.current_season = seasonId
 
 
 def setupSeason():

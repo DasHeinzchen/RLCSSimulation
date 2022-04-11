@@ -4,8 +4,8 @@ import json
 import structure.Major as Major
 
 class Split:
-    def __init__(self, id):
-        self._id = id
+    def __init__(self, splitId):
+        self._id = splitId
         self._current = False
         self._currentEvent = ""
         self._name = ""
@@ -58,9 +58,7 @@ def initializeSplit(splitId, path):
         splitFile.write(json.dumps(dict, indent=5))
 
 def getSplitById(id):
-    split = Split(id=id)
-    split.loadData()
-    return split
+    return Split(id)
 
 def setupSplits(seasonId):
     path = Globals.settings["path"] + "seasons\\" + seasonId + "\\SPL"

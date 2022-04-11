@@ -113,6 +113,20 @@ class QuarterFinals(BracketPart):
         else:
             return teams
 
+    @staticmethod
+    def initialize(partId, current, bo):
+        return {
+            "id": partId,
+            "current": current,
+            "currentSeries": partId + "_1",
+            "bestOf": bo,
+            "teams": [],
+            "qf1": Games.Series.initialize(partId + "_1", current, bo),
+            "qf2": Games.Series.initialize(partId + "_2", False, bo),
+            "qf3": Games.Series.initialize(partId + "_3", False, bo),
+            "qf4": Games.Series.initialize(partId + "_4", False, bo)
+        }
+
 
 class SemiFinals(BracketPart):
     def __init__(self, partId="", bo=0, current=False, dict={}, teams=[]):

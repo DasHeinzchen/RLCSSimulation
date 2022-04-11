@@ -95,11 +95,20 @@ class FallFormat(Format):
         self.updateDict({"playoffs": self._playoffs.saveBracket()})
         return self.dict
 
+    @staticmethod
+    def initialize(formatId, current):
+        return {
+            "type": "Fall_Format",
+            "current": current,
+            "currentBracket": formatId + "_PO",                  #TODO change first
+            "teams": [],
+            "playoffs": Brackets.SE8.initialize(formatId + "_PO", current, 1)          #TODO current to False
+        }
 
-def initializeFormat(formatType, formatId, current=False, teams=[]):
+
+def initializeFormat(formatType, formatId, current):
     if formatType == "Fall_Format":
-        Globals.format = FallFormat(formatId=formatId, current=current, teams=teams)
-        return Globals.format.dict
+        return FallFormat.initialize(formatId, current)
     else: return {}
 
 

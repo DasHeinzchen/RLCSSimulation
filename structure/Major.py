@@ -11,6 +11,7 @@ class Major:
         self._name = ""
         self._teams = [] #seeded
         self._formatType = ""
+        self._formatDict = {}
 
         self.loadData()
 
@@ -23,6 +24,7 @@ class Major:
             self._formatType = dictionary["formatType"]
             for team in dictionary["teams"]:
                 self._teams.append(Team.getTeamById(team))
+            self._formatDict = dictionary["format"]
         return self
 
     def saveData(self):
@@ -35,7 +37,8 @@ class Major:
                 "current": self._current,
                 "formatType": self._formatType,
                 "name": self._name,
-                "teams": teamStrings
+                "teams": teamStrings,
+                "format": self._formatDict
             }
 
             majorFile.write(json.dumps(dictionary, indent=5))
@@ -64,7 +67,7 @@ def initializeMajor(majorId, path):
             dict["formatType"] = "Spring_Format"
             dict["name"] = "Spring Major"
 
-        dict["format"] = Formats.initializeFormat(dict["formatType"], majorId, current=dict["current"])
+        dict["format"] = Formats.initializeFormat(dict["formatType"], majorId, dict["current"])
 
         majorFile.write(json.dumps(dict, indent=5))
 

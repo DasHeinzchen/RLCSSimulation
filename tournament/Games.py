@@ -33,6 +33,16 @@ class Match:
         }
         return self._dict
 
+    @staticmethod
+    def initialize(matchId, current):
+        return {
+            "id": matchId,
+            "current": current,
+            "score1": 0,
+            "score2": 0,
+            "winner": 0
+        }
+
     @property
     def score1(self):
         return self._score1
@@ -178,6 +188,26 @@ class Series:
 
     def seriesFinished(self, winner):
         self._winner = winner
+
+    @staticmethod
+    def initialize(seriesId, current, bo):
+        matches = []
+        for i in range(int((bo + 1) / 2)):
+            if i == 0: matches.append(Match.initialize(seriesId + "_M1", current))
+            else: matches.append(Match.initialize(seriesId + "_M" + str(i + 1), False))
+
+        return {
+            "id": seriesId,
+            "current": current,
+            "currentMatch": seriesId + "",
+            "bestOf": bo,
+            "team1": Team.placeholder.id,
+            "score1": 0,
+            "team2": Team.placeholder.id,
+            "score2": 0,
+            "winner": 0,
+            "matches": matches
+        }
 
     @property
     def team1(self):

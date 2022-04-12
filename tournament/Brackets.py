@@ -4,8 +4,8 @@ import tournament.BracketParts as Parts
 def submitScore(bracketDict, partDict, condition):
     bracketDict[bracketDict["currentPart"]] = partDict
     if condition:
+        bracketDict[bracketDict["currentPart"]]["current"] = False
         if len(bracketDict["upcomingParts"]) > 0:
-            bracketDict["currentPart"] = bracketDict["upcomingParts"].pop(0)
             bracketDict = startBracket(bracketDict)
             return bracketDict, False
         else:
@@ -36,8 +36,10 @@ class SE8:
             "id": bracketId,
             "current": False,
             "currentPart": "",
-            "upcomingParts": ["quarterFinals", "semiFinals"],
+            "upcomingParts": ["quarterFinals", "semiFinals", "finals"],
             "teams": [],
             "quarterFinals": Parts.QuarterFinals.initialize(bracketId + "_QF", variations[variation]["qfbo"]),
-            "semiFinals": Parts.SemiFinals.initialize(bracketId + "_SF", variations[variation]["sfbo"])
+            "semiFinals": Parts.SemiFinals.initialize(bracketId + "_SF", variations[variation]["sfbo"]),
+            "finals":
+                Parts.Finals.initialize(bracketId + "_FIN", variations[variation]["fbo"], variations[variation]["fset"])
         }

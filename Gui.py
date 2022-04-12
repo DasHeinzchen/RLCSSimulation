@@ -1,8 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
 
 import EventHandler
-import Globals
+import Team
 
 class ScoreWindow:
     def __init__(self):
@@ -10,11 +9,14 @@ class ScoreWindow:
         scoreWindow.title("Score Window")
         scoreWindow.eval('tk::PlaceWindow . center')
 
-        team1Lbl = tk.Label(scoreWindow, text=Globals.current_series.team1.name)
-        team2Lbl = tk.Label(scoreWindow, text=Globals.current_series.team2.name)
+        season, split, event = EventHandler.load()
+        series = EventHandler.loadFormat(event.formatDict)[2]
+
+        team1Lbl = tk.Label(scoreWindow, text=Team.getTeamById(series["team1"]).name)
+        team2Lbl = tk.Label(scoreWindow, text=Team.getTeamById(series["team2"]).name)
         seriesScoreLblMid = tk.Label(scoreWindow, text="Series Score")
-        seriesScoreLblT1 = tk.Label(scoreWindow, text=str(Globals.current_series.score1))
-        seriesScoreLblT2 = tk.Label(scoreWindow, text=str(Globals.current_series.score2))
+        seriesScoreLblT1 = tk.Label(scoreWindow, text=str(series["score1"]))
+        seriesScoreLblT2 = tk.Label(scoreWindow, text=str(series["score2"]))
         enterScoreLbl = tk.Label(scoreWindow, text="Enter match score")
         team1Entry = tk.Entry(scoreWindow)
         team2Entry = tk.Entry(scoreWindow)
@@ -22,8 +24,9 @@ class ScoreWindow:
         def submit():
             if team1Entry.get().isdigit() and team2Entry.get().isdigit():
                 if int(team1Entry.get()) is not int(team2Entry.get()):
-                    Globals.current_series.submitScore(int(team1Entry.get()), int(team2Entry.get()))
-                    EventHandler.matchFinished()
+                    event.formatDict = EventHandler.submitScore(int(team1Entry.get()), int(team2Entry.get()), event.formatDict)
+
+                    event.saveData()
 
                     scoreWindow.destroy()
                 else:

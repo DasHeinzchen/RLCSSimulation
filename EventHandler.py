@@ -1,25 +1,40 @@
 import Globals
 import Team
 from structure import Season, Split, Major
-
-
-def matchFinished():
-    Globals.format.saveFormat()
-
+from tournament import Brackets, BracketParts, Formats, Games
 
 def close():
     Team.saveAllTeamData()
-    season = Season.getSeasonById(Globals.current_season)
-    season.saveData()
-    split = Split.getSplitById(season.currentSplit)
-    split.saveData()
-
-    eventId = split.currentEvent
-    eventId = eventId.split("_")
-    if eventId[2] == "MJR":
-        event = Major.getMajorById(eventId[0] + "_" + eventId[1] + "_" + eventId[2])
-        event.saveData()
 
 
 def initializeSeason():
     Season.setupSeason()
+
+def load():
+    season = Season.Season(Globals.current_season)
+    split = Split.Split(season.currentSplit)
+    event = None
+    if split.currentEvent[-3:] == "MJR":
+        event = Major.Major(split.currentEvent)
+
+    return season, split, event
+
+def loadFormat(format):
+    bracket = format[format["currentBracket"]]
+    bracketPart = bracket[bracket["currentPart"]]
+    series = bracketPart[bracketPart["currentSeries"]]
+    match = series["matches"][series["currentMatch"]]
+
+    return bracket, bracketPart, series, match
+
+def submitScore(score1, score2, formatDict):
+    bracket, bracketPart, series, match = loadFormat(formatDict)
+    condition = False
+    match = Games.Match.submitScore(score1, score2, match)
+    series, condition = Games.Series.submitScore(series, match)
+    bracketPart, condition = BracketParts.BracketPart.submitScore(bracketPart, series, condition)
+    print(condition)
+    bracket[bracket["currentPart"]] = bracketPart
+    formatDict[formatDict["currentBracket"]] = bracket
+
+    return formatDict

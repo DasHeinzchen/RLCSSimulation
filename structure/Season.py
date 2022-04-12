@@ -18,6 +18,8 @@ class Season:
             self._current = dictionary["current"]
             self._currentSplit = dictionary["currentSplit"]
 
+            seasonFile.close()
+
         return self
 
     def saveData(self):
@@ -28,6 +30,7 @@ class Season:
             }
 
             seasonFile.write(json.dumps(dictionary, indent=5))
+            seasonFile.close()
 
     @property
     def id(self):

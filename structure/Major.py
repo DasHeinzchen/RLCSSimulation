@@ -25,6 +25,8 @@ class Major:
             for team in dictionary["teams"]:
                 self._teams.append(Team.getTeamById(team))
             self._formatDict = dictionary["format"]
+
+            majorFile.close()
         return self
 
     def saveData(self):
@@ -42,10 +44,22 @@ class Major:
             }
 
             majorFile.write(json.dumps(dictionary, indent=5))
+            majorFile.close()
 
     @property
     def formatType(self):
         return self._formatType
+
+    @property
+    def formatDict(self):
+        return self._formatDict
+
+    @formatDict.setter
+    def formatDict(self, formatDict):
+        self._formatDict = formatDict
+
+    def updateFormatWithBracket(self, bracket, bracketDict):
+        self._formatDict.update({bracket: bracketDict})
 
 
 def initializeMajor(majorId, path):
@@ -70,6 +84,7 @@ def initializeMajor(majorId, path):
         dict["format"] = Formats.initializeFormat(dict["formatType"], majorId, dict["current"])
 
         majorFile.write(json.dumps(dict, indent=5))
+        majorFile.close()
 
 def getMajorById(id):
     return Major(id=id).loadData()

@@ -19,6 +19,7 @@ class Split:
             self._current = dictionary["current"]
             self._currentEvent = dictionary["currentEvent"]
             self._name = dictionary["name"]
+            splitFile.close()
 
         return self
 
@@ -32,6 +33,7 @@ class Split:
             }
 
             splitFile.write(json.dumps(dictionary, indent=5))
+            splitFile.close()
 
     @property
     def current(self):
@@ -56,6 +58,7 @@ def initializeSplit(splitId, path):
         elif splitId[-1] == "3": dict["name"] = "Spring Split"
 
         splitFile.write(json.dumps(dict, indent=5))
+        splitFile.close()
 
 def getSplitById(id):
     return Split(id)

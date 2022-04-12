@@ -46,6 +46,11 @@ class Major:
             majorFile.write(json.dumps(dictionary, indent=5))
             majorFile.close()
 
+    def start(self):
+        self._current = True
+        self._formatDict = Formats.startFormat(self._formatDict)
+        self.saveData()
+
     @property
     def formatType(self):
         return self._formatType
@@ -58,14 +63,11 @@ class Major:
     def formatDict(self, formatDict):
         self._formatDict = formatDict
 
-    def updateFormatWithBracket(self, bracket, bracketDict):
-        self._formatDict.update({bracket: bracketDict})
-
 
 def initializeMajor(majorId, path):
     with open(path, "w") as majorFile:
         dict = {
-            "current": True,                    #TODO change to false when not first split event
+            "current": False,
             "formatType": "",
             "name": "Major",
             "teams": [],
@@ -81,7 +83,7 @@ def initializeMajor(majorId, path):
             dict["formatType"] = "Spring_Format"
             dict["name"] = "Spring Major"
 
-        dict["format"] = Formats.initializeFormat(dict["formatType"], majorId, dict["current"])
+        dict["format"] = Formats.initializeFormat(dict["formatType"], majorId)
 
         majorFile.write(json.dumps(dict, indent=5))
         majorFile.close()

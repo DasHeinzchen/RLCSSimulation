@@ -8,6 +8,7 @@ class Split:
         self._id = splitId
         self._current = False
         self._currentEvent = ""
+        self._upcomingEvents = []
         self._name = ""
 
         self.loadData()
@@ -19,6 +20,7 @@ class Split:
             self._current = dictionary["current"]
             self._currentEvent = dictionary["currentEvent"]
             self._name = dictionary["name"]
+            self._upcomingEvents = dictionary["upcomingEvents"]
             splitFile.close()
 
         return self
@@ -29,15 +31,28 @@ class Split:
             dictionary = {
                 "current": self._current,
                 "currentEvent": self._currentEvent,
+                "upcomingEvents": self._upcomingEvents,
                 "name": self._name
             }
 
             splitFile.write(json.dumps(dictionary, indent=5))
             splitFile.close()
 
+    def startSplit(self):
+        self._current = True
+        self._currentEvent = self._upcomingEvents.pop(0)
+        self.saveData()
+
+        if self._currentEvent[-3:] == "MJR":
+            Major.Major(self._currentEvent).start()
+
     @property
     def current(self):
         return self._current
+
+    @current.setter
+    def current(self, current):
+        self._current = current
 
     @property
     def currentEvent(self):
@@ -48,7 +63,8 @@ def initializeSplit(splitId, path):
     with open(path, "w") as splitFile:
         dict = {
             "current": False,
-            "currentEvent": splitId + "_MJR",                   #TODO change to actual first event
+            "currentEvent": "",
+            "upcomingEvents": [splitId + "_MJR"],
             "name": "Split"
         }
         if splitId[-1] == "1":

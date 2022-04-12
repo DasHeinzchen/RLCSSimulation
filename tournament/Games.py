@@ -3,10 +3,10 @@ import Team
 
 class Match:
     @staticmethod
-    def initialize(matchId, current):
+    def initialize(matchId):
         return {
             "id": matchId,
-            "current": current,
+            "current": False,
             "score1": 0,
             "score2": 0,
             "winner": 0
@@ -22,19 +22,24 @@ class Match:
 
         return matchDict
 
+    @staticmethod
+    def start(matchDict):
+        matchDict["current"] = True
+        return matchDict
+
 
 class Series:
     @staticmethod
-    def initialize(seriesId, current, bo):
+    def initialize(seriesId, bo):
         matches = []
         for i in range(int((bo + 1) / 2)):
-            if i == 0: matches.append(Match.initialize(seriesId + "_M1", current))
-            else: matches.append(Match.initialize(seriesId + "_M" + str(i + 1), False))
+            if i == 0: matches.append(Match.initialize(seriesId + "_M1"))
+            else: matches.append(Match.initialize(seriesId + "_M" + str(i + 1)))
 
         return {
             "id": seriesId,
-            "current": current,
-            "currentMatch": 0,
+            "current": False,
+            "currentMatch": -1,
             "bestOf": bo,
             "team1": Team.placeholder.id,
             "score1": 0,
@@ -68,3 +73,9 @@ class Series:
             return seriesDict, False
         else:
             return seriesDict, True
+
+    @staticmethod
+    def start(seriesDict):
+        seriesDict["current"] = True
+        seriesDict["matches"][0] = Match.start(seriesDict["matches"][0])
+        return seriesDict

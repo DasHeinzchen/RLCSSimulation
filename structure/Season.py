@@ -8,6 +8,7 @@ class Season:
         self._id = seasonId
         self._current = False
         self._currentSplit = ""
+        self._upcomingSplits = []
 
         self.loadData()
 
@@ -17,6 +18,7 @@ class Season:
 
             self._current = dictionary["current"]
             self._currentSplit = dictionary["currentSplit"]
+            self._upcomingSplits = dictionary["upcomingSplits"]
 
             seasonFile.close()
 
@@ -26,11 +28,15 @@ class Season:
         with open(Globals.settings["path"] + "seasons\\" + self._id + "\\season.json", "w") as seasonFile:
             dictionary = {
                 "current": self._current,
-                "currentSplit": self._currentSplit
+                "currentSplit": self._currentSplit,
+                "upcomingSplits": self._upcomingSplits
             }
 
             seasonFile.write(json.dumps(dictionary, indent=5))
             seasonFile.close()
+
+    def start(self):
+        Split.Split(self._currentSplit).startSplit()
 
     @property
     def id(self):
@@ -64,7 +70,8 @@ def initializeSeason(seasonId):
     with open(Globals.settings["path"] + "seasons\\" + seasonId + "\\season.json", "w") as seasonFile:
         dict = {
             "current": True,
-            "currentSplit": seasonId + "_SPL1"
+            "currentSplit": seasonId + "_SPL1",
+            "upcomingSplits": [seasonId + "_SPL2", seasonId + "_SPL3"]
         }
         seasonFile.write(json.dumps(dict, indent=5))
 

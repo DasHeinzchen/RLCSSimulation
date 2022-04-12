@@ -9,6 +9,7 @@ def close():
 
 def initializeSeason():
     Season.setupSeason()
+    Season.Season(Globals.current_season).start()
 
 def load():
     season = Season.Season(Globals.current_season)
@@ -32,9 +33,8 @@ def submitScore(score1, score2, formatDict):
     condition = False
     match = Games.Match.submitScore(score1, score2, match)
     series, condition = Games.Series.submitScore(series, match)
-    bracketPart, condition = BracketParts.BracketPart.submitScore(bracketPart, series, condition)
-    print(condition)
-    bracket[bracket["currentPart"]] = bracketPart
+    bracketPart, condition = BracketParts.submitScore(bracketPart, series, condition)
+    bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
     formatDict[formatDict["currentBracket"]] = bracket
 
     return formatDict

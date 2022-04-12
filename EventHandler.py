@@ -3,6 +3,7 @@ import Team
 from structure import Season, Split, Major
 from tournament import Brackets, BracketParts, Formats, Games
 
+
 def close():
     Team.saveAllTeamData()
 
@@ -10,6 +11,7 @@ def close():
 def initializeSeason():
     Season.setupSeason()
     Season.Season(Globals.current_season).start()
+
 
 def load():
     season = Season.Season(Globals.current_season)
@@ -20,6 +22,7 @@ def load():
 
     return season, split, event
 
+
 def loadFormat(format):
     bracket = format[format["currentBracket"]]
     bracketPart = bracket[bracket["currentPart"]]
@@ -27,6 +30,7 @@ def loadFormat(format):
     match = series["matches"][series["currentMatch"]]
 
     return bracket, bracketPart, series, match
+
 
 def submitScore(score1, score2, formatDict):
     bracket, bracketPart, series, match = loadFormat(formatDict)

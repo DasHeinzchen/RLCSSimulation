@@ -62,10 +62,10 @@ class Series:
                     and not len(seriesDict["matches"]) - (seriesDict["currentMatch"] + 1)
                             == ((seriesDict["bestOf"] + 1) / 2) - seriesDict["score2"]):
             seriesDict["matches"].append(Match.initialize(seriesDict["id"] + "_M" +
-                                                          str(len(seriesDict["matches"]) + 1), False))
+                                                          str(len(seriesDict["matches"]) + 1)))
 
-        if seriesDict["score1"] == 4: seriesDict["winner"] = 1
-        elif seriesDict["score2"] == 4: seriesDict["winner"] = 2
+        if seriesDict["score1"] == int((seriesDict["bestOf"] + 1) / 2): seriesDict["winner"] = 1
+        elif seriesDict["score2"] == int((seriesDict["bestOf"] + 1) / 2): seriesDict["winner"] = 2
 
         if seriesDict["winner"] == 0:
             seriesDict["currentMatch"] += 1
@@ -77,5 +77,6 @@ class Series:
     @staticmethod
     def start(seriesDict):
         seriesDict["current"] = True
+        seriesDict["currentMatch"] = 0
         seriesDict["matches"][0] = Match.start(seriesDict["matches"][0])
         return seriesDict

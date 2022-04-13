@@ -8,7 +8,7 @@ def startFormat(formatDict):
     return formatDict
 
 
-class FallFormat():
+class FallFormat:
     @staticmethod
     def initialize(formatId):
         return {
@@ -20,6 +20,12 @@ class FallFormat():
             "playoffs": Brackets.SE8.initialize(formatId + "_PO", 1)          #TODO current to False
         }
 
+    @staticmethod
+    def addTeams(formatDict):
+        formatDict["playoffs"]["teams"] = formatDict["teams"]           #TODO change when not first
+        formatDict["playoffs"] = Brackets.SE8.addTeams(formatDict["playoffs"])      # TODO change when not first
+        return formatDict
+
 
 def initializeFormat(formatType, formatId):
     if formatType == "Fall_Format":
@@ -27,6 +33,7 @@ def initializeFormat(formatType, formatId):
     else: return {}
 
 
-def loadFormat(dict, formatType):
-    if formatType == "Fall_Format":
-        return FallFormat(dict=dict)
+def addTeams(formatDict, teams):
+    formatDict["teams"] = teams
+    if formatDict["type"] == "Fall_Format":
+        return FallFormat.addTeams(formatDict)

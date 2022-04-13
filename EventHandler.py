@@ -35,10 +35,16 @@ def loadFormat(format):
 def submitScore(score1, score2, formatDict):
     bracket, bracketPart, series, match = loadFormat(formatDict)
     condition = False
+    sideCondition = False
     match = Games.Match.submitScore(score1, score2, match)
     series, condition = Games.Series.submitScore(series, match)
+    sideCondition += condition
     bracketPart, condition = BracketParts.submitScore(bracketPart, series, condition)
-    bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
+    if sideCondition:
+        bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
+        bracket = Brackets.checkResults(bracket)
+    else:
+        bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
     formatDict[formatDict["currentBracket"]] = bracket
 
     return formatDict

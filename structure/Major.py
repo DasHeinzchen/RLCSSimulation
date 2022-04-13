@@ -47,8 +47,15 @@ class Major:
             majorFile.close()
 
     def start(self):
+        ###Temporary Teams###
+        self._teams = Team.europeanTeams
+        #####################
         self._current = True
         self._formatDict = Formats.startFormat(self._formatDict)
+        teamStrings = []
+        for team in self._teams:
+            teamStrings.append(team.id)
+        self._formatDict = Formats.addTeams(self._formatDict, teamStrings)
         self.saveData()
 
     @property

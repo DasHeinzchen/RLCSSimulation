@@ -40,11 +40,11 @@ def submitScore(score1, score2, formatDict):
     series, condition = Games.Series.submitScore(series, match)
     sideCondition += condition
     bracketPart, condition = BracketParts.submitScore(bracketPart, series, condition)
-    if sideCondition:
+    if bool(sideCondition):
         bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
         bracket = Brackets.checkResults(bracket)
     else:
         bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
-    formatDict[formatDict["currentBracket"]] = bracket
+    formatDict, condition = Formats.submitScore(formatDict, bracket, condition)
 
     return formatDict

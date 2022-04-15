@@ -1,7 +1,9 @@
 import tkinter as tk
+import random
 
 import EventHandler
 import Team
+
 
 class ScoreWindow:
     def __init__(self):
@@ -34,7 +36,21 @@ class ScoreWindow:
             else:
                 print("Invalid Entry Text")
 
+        def simulate():
+            condition = True
+            while condition:
+                score1 = random.randint(0, 10)
+                score2 = random.randint(0, 10)
+                if not score1 == score2:
+                    condition = False
+                    event.formatDict = EventHandler.submitScore(score1, score2, event.formatDict)
+
+                    event.saveData()
+
+                    scoreWindow.destroy()
+
         cnfrmBtn = tk.Button(scoreWindow, text="Confirm", command=submit)
+        simulateBtn = tk.Button(scoreWindow, text="Simulate", command=simulate)
 
         team1Lbl.grid(row=0, column=0)
         team2Lbl.grid(row=0, column=2)
@@ -45,6 +61,7 @@ class ScoreWindow:
         team1Entry.grid(row=2, column=0)
         team2Entry.grid(row=2, column=2)
         cnfrmBtn.grid(row=3, column=1)
+        simulateBtn.grid(row=4, column=1)
 
         scoreWindow.mainloop()
 

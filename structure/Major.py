@@ -1,8 +1,10 @@
 import Globals
 import json
+import random
 
 import Team
 import tournament.Formats as Formats
+
 
 class Major:
     def __init__(self, id):
@@ -48,7 +50,9 @@ class Major:
 
     def start(self):
         ###Temporary Teams###
-        self._teams = Team.europeanTeams
+        teams = Team.europeanTeams
+        random.shuffle(teams)
+        self._teams = teams[:16]
         #####################
         self._current = True
         self._formatDict = Formats.startFormat(self._formatDict)
@@ -95,8 +99,10 @@ def initializeMajor(majorId, path):
         majorFile.write(json.dumps(dict, indent=5))
         majorFile.close()
 
+
 def getMajorById(id):
     return Major(id=id).loadData()
+
 
 def setupMajor(splitId):
     majorId = splitId + "_MJR"

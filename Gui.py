@@ -2,6 +2,7 @@ import tkinter as tk
 import random
 
 import EventHandler
+import Globals
 import Team
 
 
@@ -26,9 +27,12 @@ class ScoreWindow:
         def submit():
             if team1Entry.get().isdigit() and team2Entry.get().isdigit():
                 if int(team1Entry.get()) is not int(team2Entry.get()):
-                    event.formatDict = EventHandler.submitScore(int(team1Entry.get()), int(team2Entry.get()), event.formatDict)
+                    event.formatDict, condition = EventHandler.submitScore(
+                        int(team1Entry.get()), int(team2Entry.get()), event.formatDict)
 
                     event.saveData()
+
+                    if condition: EventHandler.eventFinished()
 
                     scoreWindow.destroy()
                 else:
@@ -43,9 +47,11 @@ class ScoreWindow:
                 score2 = random.randint(0, 10)
                 if not score1 == score2:
                     condition = False
-                    event.formatDict = EventHandler.submitScore(score1, score2, event.formatDict)
+                    event.formatDict, condition = EventHandler.submitScore(score1, score2, event.formatDict)
 
                     event.saveData()
+
+                    if condition: EventHandler.eventFinished()
 
                     scoreWindow.destroy()
 
@@ -97,6 +103,7 @@ class MainWindow:
 
         mainWindow.mainloop()
 
+
 class SeasonOverviewWindow:
     def __init__(self):
         seasonOverviewWindow = tk.Tk()
@@ -105,6 +112,7 @@ class SeasonOverviewWindow:
 
         seasonOverviewWindow.mainloop()
 
+
 class SeasonCreateWindow:
 
     def __init__(self):
@@ -112,16 +120,85 @@ class SeasonCreateWindow:
         seasonCreateWindow.title("Create Season")
         seasonCreateWindow.eval('tk::PlaceWindow . center')
 
+        regions = [[], [], []]
+        dictionaryQual = {"invit": {}, "open": {}}
+
         def create():
-            #Season.addSeason()
-            EventHandler.initializeSeason()
+            EventHandler.initializeSeason(dictionaryQual)
 
             seasonCreateWindow.destroy()
 
+        def switchEU():
+            switch("EU")
+
+        def switchNA():
+            switch("NA")
+
+        def switchSAM():
+            switch("SAM")
+
+        def switchOCE():
+            switch("OCE")
+
+        def switchMENA():
+            switch("MENA")
+
+        def switchAPACN():
+            switch("APACN")
+
+        def switchAPACS():
+            switch("APACS")
+
+        def switchSSA():
+            switch("SSA")
+
+        def switch(region):
+            if regions[0][Globals.regions.index(region)]["text"] == region:
+                regions[0][Globals.regions.index(region)].config(text="")
+                regions[1][Globals.regions.index(region)].config(text=region)
+                dictionaryQual["invit"][region] = False
+                dictionaryQual["open"][region] = True
+            else:
+                regions[0][Globals.regions.index(region)].config(text=region)
+                regions[1][Globals.regions.index(region)].config(text="")
+                dictionaryQual["invit"][region] = True
+                dictionaryQual["open"][region] = False
+
+        for region in Globals.regions:
+            dictionaryQual["invit"].update({region: False})
+            dictionaryQual["open"].update({region: True})
+            regions[0].append(tk.Label(seasonCreateWindow))
+            regions[1].append(tk.Label(seasonCreateWindow, text=region))
+            if region == "EU":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchEU))
+            elif region == "NA":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchNA))
+            elif region == "SAM":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchSAM))
+            elif region == "OCE":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchOCE))
+            elif region == "MENA":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchMENA))
+            elif region == "APACN":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchAPACN))
+            elif region == "APACS":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchAPACS))
+            elif region == "SSA":
+                regions[2].append(tk.Button(seasonCreateWindow, text="<-->", command=switchSSA))
+
         noteLbl = tk.Label(seasonCreateWindow, text="Note: The new Season will be marked as current")
+        invitLbl = tk.Label(seasonCreateWindow, text="Invitational Qualifier")
+        openLbl = tk.Label(seasonCreateWindow, text="Open Qualifier")
         closeBtn = tk.Button(seasonCreateWindow, text="Create new Season", command=create)
 
-        noteLbl.grid(row=0, column=0)
-        closeBtn.grid(row=1, column=0)
+        noteLbl.grid(row=0, column=1)
+        invitLbl.grid(row=1, column=0)
+        openLbl.grid(row=1, column=2)
+        closeBtn.grid(row=15, column=1)
+
+        for i in range(len(Globals.regions)):
+            regions[0][i].grid(row=2+i, column=0)
+            regions[1][i].grid(row=2+i, column=2)
+            regions[2][i].grid(row=2+i, column=1)
 
         seasonCreateWindow.mainloop()

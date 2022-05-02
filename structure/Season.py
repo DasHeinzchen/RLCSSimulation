@@ -2,6 +2,7 @@ import Globals
 import json
 import os
 import structure.Split as Split
+import Rankings
 
 class Season:
     def __init__(self, seasonId):
@@ -78,7 +79,7 @@ def initializeSeason(seasonId):
     Globals.current_season = seasonId
 
 
-def setupSeason():
+def setupSeason(dictionaryQual):
     seasonId = "S"
     with open(Globals.settings["path"] + "seasons\\seasons.json") as seasonsFile:
         seasonsJson = json.load(seasonsFile)
@@ -98,7 +99,16 @@ def setupSeason():
     except OSError:
         print("Creation of the Season directory failed")
     else:
+        try:
+            os.mkdir(Globals.settings["path"] + "seasons\\" + seasonId + "\\rankings")
+        except OSError:
+            print("Creation of the Season Rankings directory failed")
+        else:
+            for region in Globals.regions:
+                open(Globals.settings["path"] + "seasons\\" + seasonId + "\\rankings\\" + region + ".json", "a").close()
+            open(Globals.settings["path"] + "seasons\\" + seasonId + "\\rankings\\" + "worlds_spots.json", "a").close()
+            Rankings.initializeSeasonRankings()
         open(Globals.settings["path"] + "seasons\\" + seasonId + "\\season.json", "a").close()
-        Split.setupSplits(seasonId)
+        Split.setupSplits(seasonId, dictionaryQual)
 
     initializeSeason(seasonId)

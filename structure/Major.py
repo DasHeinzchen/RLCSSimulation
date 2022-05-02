@@ -1,6 +1,5 @@
 import Globals
 import json
-import random
 
 import Team
 import tournament.Formats as Formats
@@ -11,7 +10,7 @@ class Major:
         self._id = id
         self._current = False
         self._name = ""
-        self._teams = [] #seeded
+        self._teams = []
         self._formatType = ""
         self._formatDict = {}
 
@@ -49,11 +48,6 @@ class Major:
             majorFile.close()
 
     def start(self):
-        ###Temporary Teams###
-        teams = Team.europeanTeams
-        random.shuffle(teams)
-        self._teams = teams[:16]
-        #####################
         self._current = True
         self._formatDict = Formats.startFormat(self._formatDict)
         teamStrings = []
@@ -74,6 +68,18 @@ class Major:
     def formatDict(self, formatDict):
         self._formatDict = formatDict
 
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def current(self):
+        return self._current
+
+    @current.setter
+    def current(self, current):
+        self._current = current
+
 
 def initializeMajor(majorId, path):
     with open(path, "w") as majorFile:
@@ -81,7 +87,8 @@ def initializeMajor(majorId, path):
             "current": False,
             "formatType": "",
             "name": "Major",
-            "teams": [],
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
             "format": {}
         }
         if majorId.split("_")[1][-1] == "1":

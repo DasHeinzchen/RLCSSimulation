@@ -294,6 +294,8 @@ asiaPacificSouthTeamsUnsorted = []
 subSaharanAfricanTeams = []
 subSaharanAfricanTeamsUnsorted = []
 placeholder = Team("TBD", "", "tbd")
+defwin = Team("BYE", "", "bye")
+
 
 def readTeamsJson():
     with open(Globals.settings["path"] + "config\\teams.json") as teamsFile:
@@ -377,6 +379,7 @@ def saveAllTeamData():
     for team in subSaharanAfricanTeams:
         team.saveData()
 
+
 def getTeamById(teamId):
     if teamId == placeholder.id:
         return placeholder
@@ -412,3 +415,64 @@ def getTeamById(teamId):
         for team in subSaharanAfricanTeams:
             if team.id == teamId:
                 return team
+
+
+def teamsByRegion(region, filter=[]):
+    if not filter:
+        if region == "EU":
+            return europeanTeams
+        elif region == "NA":
+            return northAmericanTeams
+        elif region == "SAM":
+            return southAmericanTeams
+        elif region == "OCE":
+            return oceanicTeams
+        elif region == "MENA":
+            return middleEastNorthAfricanTeams
+        elif region == "APACN":
+            return asiaPacificNorthTeams
+        elif region == "APACS":
+            return asiaPacificSouthTeams
+        elif region == "SSA":
+            return subSaharanAfricanTeams
+    else:
+        if region == "EU":
+            teams = europeanTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "NA":
+            teams = northAmericanTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "SAM":
+            teams = southAmericanTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "OCE":
+            teams = oceanicTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "MENA":
+            teams = middleEastNorthAfricanTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "APACN":
+            teams = asiaPacificNorthTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "APACS":
+            teams = asiaPacificSouthTeams
+            for team in filter:
+                teams.remove(team)
+            return teams
+        elif region == "SSA":
+            teams = subSaharanAfricanTeams
+            for team in filter:
+                teams.remove(team)
+            return teams

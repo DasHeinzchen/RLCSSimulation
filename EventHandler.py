@@ -1,6 +1,6 @@
 import Globals
 import Team
-from structure import Season, Split, Major
+from structure import Season, Split, Major, Regional
 from tournament import Brackets, BracketParts, Formats, Games
 
 
@@ -8,8 +8,8 @@ def close():
     Team.saveAllTeamData()
 
 
-def initializeSeason():
-    Season.setupSeason()
+def initializeSeason(dictionaryQual):
+    Season.setupSeason(dictionaryQual)
     Season.Season(Globals.current_season).start()
 
 
@@ -19,6 +19,8 @@ def load():
     event = None
     if split.currentEvent[-3:] == "MJR":
         event = Major.Major(split.currentEvent)
+    elif split.currentEvent.split("_")[3][:3] == "REG":
+        event = Regional.Regional(split.currentEvent)
 
     return season, split, event
 
@@ -47,4 +49,10 @@ def submitScore(score1, score2, formatDict):
         bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
     formatDict, condition = Formats.submitScore(formatDict, bracket, condition)
 
-    return formatDict
+    return formatDict, condition
+
+
+def eventFinished():
+    season, split, event = load()
+    event.current = False
+    condition = split.nextEvent()

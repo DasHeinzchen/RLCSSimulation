@@ -80,3 +80,14 @@ class Series:
         seriesDict["currentMatch"] = 0
         seriesDict["matches"][0] = Match.start(seriesDict["matches"][0])
         return seriesDict
+
+    @staticmethod
+    def skip(seriesDict):
+        if seriesDict["team1"] == "_bye":
+            seriesDict["winner"] = 2
+        elif seriesDict["team2"] == "_bye":
+            seriesDict["winner"] = 1
+
+        seriesDict["current"] = False
+        seriesDict["matches"] = []
+        return seriesDict

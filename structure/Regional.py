@@ -60,6 +60,14 @@ class Regional:
         self._formatDict = Formats.addTeams(self._formatDict, teamStrings)
         self.saveData()
 
+    def seeding(self):
+        #TODO implement seeding
+        teamStrings = []
+        for team in self._teams:
+            teamStrings.append(team.id)
+        self._formatDict = Formats.addTeams(self._formatDict, teamStrings)
+        self.saveData()
+
     @property
     def id(self):
         return self._id
@@ -71,6 +79,22 @@ class Regional:
     @current.setter
     def current(self, current):
         self._current = current
+
+    @property
+    def formatDict(self):
+        return self._formatDict
+
+    @formatDict.setter
+    def formatDict(self, formatDict):
+        self._formatDict = formatDict
+
+    @property
+    def teams(self):
+        return self._teams
+
+    @teams.setter
+    def teams(self, teams):
+        self._teams = teams
 
 
 def initializeRegionals(regionalId, path, dictionaryQual):

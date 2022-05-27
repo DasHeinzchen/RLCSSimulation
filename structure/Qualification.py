@@ -1,5 +1,4 @@
 import json
-import random
 
 import Globals, Team
 from tournament import Formats
@@ -9,6 +8,7 @@ class QualDay:
     def __init__(self, qualifierId):
         self._id = qualifierId
         self._current = False
+        self._canceled = False
         self._teams = []
         self._qualifiedTeams = []
         self._formatType = ""
@@ -30,6 +30,7 @@ class QualDay:
                 dictionary = json.load(qualifierFile)
                 qualifierFile.close()
         self._current = dictionary["current"]
+        self._canceled = dictionary["canceled"]
         self._formatType = dictionary["formatType"]
         for team in dictionary["teams"]:
             self._teams.append(Team.getTeamById(team))
@@ -46,6 +47,7 @@ class QualDay:
             teamStrings[1].append(team.id)
         dictionary = {
             "current": self._current,
+            "canceled": self._canceled,
             "formatType": self._formatType,
             "teams": teamStrings[0],
             "qualifiedTeams": teamStrings[1],
@@ -64,28 +66,28 @@ class QualDay:
 
     def start(self):
         self._current = True
-        '''
+
         self._formatDict = Formats.startFormat(self._formatDict)
         teamStrings = []
         for team in self._teams:
             teamStrings.append(team.id)
         self._formatDict = Formats.addTeams(self._formatDict, teamStrings)
-        '''
+
         self.saveData()
 
-    def qualify(self):  #temporary until Formats are set up
-        teams = self._teams
-        random.shuffle(teams)
-        if self._id[-1] == "1":
-            self._qualifiedTeams = teams[:48]
-        elif self._id[-1] == "2":
-            self._qualifiedTeams = teams[:16]
-        elif self._id[-1] == "3" and self._formatType == "QualDay3":
-            self._qualifiedTeams = teams[:8]
-        elif self._id[-1] == "3" and self._formatType == "OpenQualDay3":
-            self._qualifiedTeams = teams[:16]
-        elif self._id[-5:] == "INVIT":
-            self._qualifiedTeams = self._teams
+    def cancel(self):
+        self._canceled = True
+
+    def finish(self):
+        self._current = False
+        for team in self._formatDict["placements"]["qualified"]:
+            self._qualifiedTeams.append(Team.getTeamById(team))
+
+        self.saveData()
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def teams(self):
@@ -95,10 +97,27 @@ class QualDay:
     def teams(self, teams):
         self._teams = teams
 
+    @property
+    def formatType(self):
+        return self._formatType
+
+    @property
+    def formatDict(self):
+        return self._formatDict
+
+    @formatDict.setter
+    def formatDict(self, formatDict):
+        self._formatDict = formatDict
+
+    @property
+    def qualifiedTeams(self):
+        return self._qualifiedTeams
+
     @staticmethod
     def initialize(qualifierId, format="default"):
         dictionary = {
             "current": False,
+            "canceled": False,
             "formatType": "QualDay",
             "teams": [],
             "qualifiedTeams": [],
@@ -110,6 +129,9 @@ class QualDay:
             dictionary["formatType"] += qualifierId[-1]
         elif format == "open":
             dictionary["formatType"] = "OpenQualDay" + qualifierId[-1]
+
+        dictionary["format"] = Formats.initializeFormat(dictionary["formatType"], qualifierId)
+
         ids = qualifierId.split("_")
         if ids[-1] == "INVIT":
             with open(Globals.settings["path"] + "seasons\\" + ids[0] + "\\" + ids[1] + "\\" + ids[2] + "\\Regional" +
@@ -139,3 +161,59 @@ def initializeQualification(regionalId, dictionaryQual={}):
             QualDay.initialize(regionalId + "1")
             QualDay.initialize(regionalId + "2", format="open")
             QualDay.initialize(regionalId + "3", format="open")
+
+
+def setupQualification(splitId, regional, seasonStart=False):
+    #TODO add closed Qualification Teams
+    unusedEvents = []
+    for region in Globals.regions:
+        teams = registerTeams(region)
+        if len(teams) <= 48:
+            unusedEvents.append(splitId + "_" + region + "_REG" + str(regional) + "_QUAL1")
+            if seasonStart:
+                qual = QualDay(splitId + "_" + region + "_REG1_QUAL2")
+                if qual.formatType[:4] == "Open":
+                    if len(teams) <= 32:
+                        unusedEvents.append(splitId + "_" + region + "_REG1_QUAL2")
+                        qual = QualDay(splitId + "_" + region + "_REG1_QUAL3")
+                        qual.teams = teams
+                        qual.saveData()
+                    else:
+                        qual.teams = teams
+                        qual.saveData()
+                else:
+                    if len(teams) <= 8:
+                        unusedEvents.append(splitId + "_" + region + "_REG1_QUAL2")
+                        qual = QualDay(splitId + "_" + region + "_REG1_QUAL3")
+                        qual.teams = teams
+                        qual.saveData()
+                    else:
+                        qual.teams = teams
+                        qual.saveData()
+            else:
+                if len(teams) <= 8:
+                    unusedEvents.append(splitId + "_" + region + "_REG" + str(regional) + "_QUAL2")
+                    qual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL3")
+                    qual.teams = teams
+                    qual.saveData()
+                else:
+                    qual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL2")
+                    qual.teams = teams
+                    qual.saveData()
+
+        else:
+            qual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL1")
+            qual.teams = teams
+            qual.saveData()
+
+    for event in unusedEvents:
+        qualDay = QualDay(event)
+        qualDay.cancel()
+        qualDay.saveData()
+
+    return unusedEvents
+
+
+def registerTeams(region, qualifiedTeams=[]):
+    teams = Team.teamsByRegion(region)
+    return teams

@@ -41,12 +41,12 @@ class ScoreWindow:
                 print("Invalid Entry Text")
 
         def simulate():
-            condition = True
-            while condition:
+            loopCondition = True
+            while loopCondition:
                 score1 = random.randint(0, 10)
                 score2 = random.randint(0, 10)
                 if not score1 == score2:
-                    condition = False
+                    loopCondition = False
                     event.formatDict, condition = EventHandler.submitScore(score1, score2, event.formatDict)
 
                     event.saveData()

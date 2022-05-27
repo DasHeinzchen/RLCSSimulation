@@ -25,6 +25,8 @@ def submitScore(formatDict, bracketDict, condition):
 def checkResults(formatDict):
     if formatDict["type"] == "Fall_Format":
         return FallFormat.checkResults(formatDict)
+    elif formatDict["type"] == "OQD3:16-8Q-U-16L8D-8Q":
+        return OpenQualDay3.checkResults(formatDict)
 
 
 class FallFormat:
@@ -73,9 +75,93 @@ class FallFormat:
         return formatDict
 
 
+class Swiss:
+    @staticmethod
+    def initialize(formatId, variation):
+        return {
+            "type": "Swiss",
+            "current": False,
+            "currentBracket": "",
+            "upcomingBrackets": ["swissStage"],
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "placements": {
+                "1-2": ["_tbd", "_tbd"],
+                "3-5": ["_tbd", "_tbd", "_tbd"],
+                "6-8": ["_tbd", "_tbd", "_tbd"],
+                "9-11": ["_tbd", "_tbd", "_tbd"],
+                "12-14": ["_tbd", "_tbd", "_tbd"],
+                "15-16": ["_tbd", "_tbd"]
+            },
+            "swissStage": Brackets.Swiss.initialize(formatId + "_SWISS", variation)
+        }
+
+    @staticmethod
+    def addTeams(formatDict):
+        formatDict["swissStage"]["teams"] = formatDict["teams"]
+        formatDict["swissStage"] = Brackets.Swiss.addTeams(formatDict["swissStage"])
+        return formatDict
+
+    @staticmethod
+    def checkResults(formatDict):
+        formatDict["placements"].update({
+            "1-2": formatDict["swissStage"]["placements"]["1-2"],
+            "3-5": formatDict["swissStage"]["placements"]["3-5"],
+            "6-8": formatDict["swissStage"]["placements"]["6-8"],
+            "9-11": formatDict["swissStage"]["placements"]["9-11"],
+            "12-14": formatDict["swissStage"]["placements"]["12-14"],
+            "15-16": formatDict["swissStage"]["placements"]["15-16"]
+        })
+        return formatDict
+
+
+class OpenQualDay3:
+    @staticmethod
+    def initialize(formatId):
+        return {
+            "type": "OQD3:16-8Q-U-16L8D-8Q",
+            "current": False,
+            "currentBracket": "",
+            "upcomingBrackets": ["qualification"],
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "placements": {
+                "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                              "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+            },
+            "qualification": Brackets.B16_8Q_U_16L8D_8Q.initialize(formatId + "_QUAL", 1)
+        }
+
+    @staticmethod
+    def addTeams(formatDict):
+        for i in range(32 - len(formatDict["teams"])):
+            formatDict["teams"].append("_bye")
+        formatDict["qualification"]["teams"] = formatDict["teams"]
+        formatDict["qualification"] = Brackets.B16_8Q_U_16L8D_8Q.addTeams(formatDict["qualification"])
+        return formatDict
+
+    @staticmethod
+    def checkResults(formatDict):
+        formatDict["placements"].update({
+            "qualified": formatDict["qualification"]["placements"]["qualified"],
+            "eliminated": formatDict["qualification"]["placements"]["eliminated"]
+        })
+        return formatDict
+
+
 def initializeFormat(formatType, formatId):
     if formatType == "Fall_Format":
         return FallFormat.initialize(formatId)
+    elif formatType == "QualDay3":
+        return Swiss.initialize(formatId, 1)
+    elif formatType == "OpenQualDay3":
+        return OpenQualDay3.initialize(formatId)
+    elif formatType == "Invitational":
+        return Swiss.initialize(formatId, 1)
     else: return {}
 
 
@@ -83,3 +169,5 @@ def addTeams(formatDict, teams):
     formatDict["teams"] = teams
     if formatDict["type"] == "Fall_Format":
         return FallFormat.addTeams(formatDict)
+    elif formatDict["type"] == "OQD3:16-8Q-U-16L8D-8Q":
+        return OpenQualDay3.addTeams(formatDict)

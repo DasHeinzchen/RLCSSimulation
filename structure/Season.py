@@ -2,7 +2,8 @@ import Globals
 import json
 import os
 import structure.Split as Split
-import Rankings
+from ranking import Rankings
+
 
 class Season:
     def __init__(self, seasonId):

@@ -43,6 +43,9 @@ class Split:
 
     def startSplit(self):
         self._current = True
+        if self._currentEvent == "":
+            for event in Qualification.setupQualification(self._id, 1, seasonStart=True):
+                self._upcomingEvents.remove(event)
         self._currentEvent = self._upcomingEvents.pop(0)
         self.saveData()
 
@@ -107,10 +110,10 @@ def initializeSplit(splitId, path, dictionaryQual={}):
         splitFile.close()
 
     if splitId[-1] == "1":      #Setting up teams for 1st qualifier of season
-        for region in Globals.regions:
+        '''for region in Globals.regions:
             qual = Qualification.QualDay(splitId + "_" + region + "_REG1_QUAL1")
             qual.teams = Team.teamsByRegion(region)
-            qual.saveData()
+            qual.saveData()'''
 
 
 def getSplitById(id):

@@ -1,6 +1,6 @@
 import Globals
 import Team
-from structure import Season, Split, Major, Regional
+from structure import Season, Split, Major, Regional, Qualification
 from tournament import Brackets, BracketParts, Formats, Games
 
 
@@ -19,8 +19,10 @@ def load():
     event = None
     if split.currentEvent[-3:] == "MJR":
         event = Major.Major(split.currentEvent)
-    elif split.currentEvent.split("_")[3][:3] == "REG":
+    elif split.currentEvent[-4:-1] == "REG":
         event = Regional.Regional(split.currentEvent)
+    elif split.currentEvent[-5:-1] == "QUAL" or split.currentEvent[-5:] == "INVIT":
+        event = Qualification.QualDay(split.currentEvent)
 
     return season, split, event
 
@@ -47,12 +49,38 @@ def submitScore(score1, score2, formatDict):
         bracket = Brackets.checkResults(bracket)
     else:
         bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
-    formatDict, condition = Formats.submitScore(formatDict, bracket, condition)
+    formatDict, sideCondition = Formats.submitScore(formatDict, bracket, condition)
 
-    return formatDict, condition
+    bye = True
+    while bye:
+        formatDict, condition, bye = checkForBye(formatDict)
+
+    return formatDict, condition or sideCondition
+
+
+def checkForBye(formatDict):
+    bracket, bracketPart, series, match = loadFormat(formatDict)
+    if series["team1"] == "_bye" or series["team2"] == "_bye":
+        if series["team1"] == "_bye": series["winner"] = 2
+        elif series["team2"] == "_bye": series["winner"] = 1
+        series["current"] = False
+        series["currentMatch"] = -1
+        series["matches"] = []
+
+        bracketPart, condition = BracketParts.submitScore(bracketPart, series, True)
+        bracket, condition = Brackets.submitScore(bracket, bracketPart, condition)
+        bracket = Brackets.checkResults(bracket)
+        formatDict, condition = Formats.submitScore(formatDict, bracket, condition)
+        return formatDict, condition, True
+    else:
+        return formatDict, False, False
 
 
 def eventFinished():
     season, split, event = load()
-    event.current = False
-    condition = split.nextEvent()
+    event.finish()
+    if event.formatType == "OpenQualDay3":
+        regional = Regional.Regional(event.id[:-6])
+        regional.teams = event.qualifiedTeams
+        regional.seeding()
+    condition = split.nextEvent() #Condition: True if last event of split finished

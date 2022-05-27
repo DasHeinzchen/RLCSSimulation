@@ -62,6 +62,8 @@ def checkResults(partDict):
         return SwissRound4.checkResults(partDict)
     elif partDict["type"] == "SWR5":
         return SwissRound5.checkResults(partDict)
+    elif partDict["type"] == "RO16":
+        return RoundOf16.checkResults(partDict)
 
 
 def seeding(bracketDict, partDict):
@@ -1114,3 +1116,47 @@ class SwissRound5:
 
         bracketDict["r5"] = partDict
         return bracketDict
+
+
+class RoundOf16:
+    @staticmethod
+    def initialize(partId, bo):
+        dictionary = {
+            "id": partId,
+            "type": "RO16",
+            "current": False,
+            "currentSeries": "",
+            "upcomingSeries": ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"],
+            "bestOf": bo,
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+        }
+        for i in range(8):
+            dictionary.update({"s" + str(i + 1): Games.Series.initialize(partId + "_SER" + str(i + 1), bo)})
+        return dictionary
+
+    @staticmethod
+    def addTeams(partDict):
+        for i in range(8):
+            #print(partDict["s" + str(i+1)])
+            #print(type(partDict["s" + str(i+1)]))
+            partDict["s" + str(i+1)]["team1"] = partDict["teams"][i]
+            partDict["s" + str(i+1)]["team2"] = partDict["teams"][15-i]
+
+        return partDict
+
+    @staticmethod
+    def checkResults(partDict):
+        if partDict[partDict["currentSeries"]]["winner"] == 1:
+            partDict["winningTeams"][int(partDict["currentSeries"][-1]) - 1] \
+                = partDict[partDict["currentSeries"]]["team1"]
+            partDict["losingTeams"][int(partDict["currentSeries"][-1]) - 1] \
+                = partDict[partDict["currentSeries"]]["team2"]
+        elif partDict[partDict["currentSeries"]]["winner"] == 2:
+            partDict["winningTeams"][int(partDict["currentSeries"][-1]) - 1] \
+                = partDict[partDict["currentSeries"]]["team2"]
+            partDict["losingTeams"][int(partDict["currentSeries"][-1]) - 1] \
+                = partDict[partDict["currentSeries"]]["team1"]
+        return partDict

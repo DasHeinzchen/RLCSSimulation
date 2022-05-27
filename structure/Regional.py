@@ -68,6 +68,11 @@ class Regional:
         self._formatDict = Formats.addTeams(self._formatDict, teamStrings)
         self.saveData()
 
+    def finish(self):
+        self._current = False
+
+        self.saveData()
+
     @property
     def id(self):
         return self._id
@@ -79,6 +84,10 @@ class Regional:
     @current.setter
     def current(self, current):
         self._current = current
+
+    @property
+    def formatType(self):
+        return self._formatType
 
     @property
     def formatDict(self):

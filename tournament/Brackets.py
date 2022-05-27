@@ -164,14 +164,15 @@ class Swiss:
         bracketDict["placements"]["15-16"] = bracketDict["r3"]["placements"]["15-16"]["teams"]
         return bracketDict
 
+
 class B16_8Q_U_16L8D_8Q:
     @staticmethod
     def initialize(bracketId, variation):
         variations = {
             1: {
-                "ur1bo": 1,
-                "lr1bo": 1,
-                "lr2bo": 1
+                "ur1bo": 5,
+                "lr1bo": 5,
+                "lr2bo": 5
             }
         }
         return {
@@ -183,15 +184,11 @@ class B16_8Q_U_16L8D_8Q:
             "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
                       "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
                       "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
-                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
-                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
                       "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
             "placements": {
                 "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
                 "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
-                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
-                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
                                "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
             },
             "ur1": Parts.RoundOf16.initialize(bracketId + "_UR1", variations[variation]["ur1bo"]),

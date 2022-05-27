@@ -91,15 +91,35 @@ class MainWindow:
         def openSeasonCreateWindow():
             SeasonCreateWindow()
 
+        def simulateBracket():
+            season, split, event = EventHandler.load()
+            bracket = EventHandler.loadFormat(event.formatDict)[0]
+
+            while bracket["current"] and not bracket["currentPart"] == "":
+                loopCondition = True
+                while loopCondition:
+                    score1 = random.randint(0, 10)
+                    score2 = random.randint(0, 10)
+                    if not score1 == score2:
+                        loopCondition = False
+                        event.formatDict, condition = EventHandler.submitScore(score1, score2, event.formatDict)
+
+                        event.saveData()
+
+                        if condition: EventHandler.eventFinished()
+            print("simulated Bracket: " + bracket["id"])
+
         scoreWindowBtn = tk.Button(mainWindow, text="Open Score Window", command=openScoreWindow)
         closeBtn = tk.Button(mainWindow, text="Close", command=close)
         viewCurrentSeasonBtn = tk.Button(mainWindow, text="View current Season", command=openSeasonOverviewWindow)
         createSeasonBtn = tk.Button(mainWindow, text="Create new Season", command=openSeasonCreateWindow)
+        simulateBracketBtn = tk.Button(mainWindow, text="Simulate Bracket", command=simulateBracket)
 
         scoreWindowBtn.grid(row=0, column=0)
         viewCurrentSeasonBtn.grid(row=1, column=0)
         createSeasonBtn.grid(row=2, column=0)
-        closeBtn.grid(row=3, column=0)
+        simulateBracketBtn.grid(row=3, column=0)
+        closeBtn.grid(row=4, column=0)
 
         mainWindow.mainloop()
 

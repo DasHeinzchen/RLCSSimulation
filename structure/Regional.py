@@ -4,6 +4,7 @@ import Globals
 import Team
 from tournament import Formats
 from structure import Qualification
+from ranking import Ranking
 
 
 class Regional:
@@ -70,8 +71,9 @@ class Regional:
 
     def finish(self):
         self._current = False
-
         self.saveData()
+
+        Ranking.addPoints(self._formatDict["placements"], self._id)
 
     @property
     def id(self):

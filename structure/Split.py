@@ -4,6 +4,7 @@ import json
 
 import Team
 from structure import Major, Regional, Qualification
+from ranking import Ranking
 
 
 class Split:
@@ -142,7 +143,9 @@ def setupSplits(seasonId, dictionaryQual):
                 except OSError:
                     print("Creation of the region directory failed")
                 else:
-                    open(path + str(i + 1) + "\\" + region + "\\rankings.json", "a").close()
+                    ranking = open(path + str(i + 1) + "\\" + region + "\\rankings.json", "a")
+                    ranking.write(json.dumps(Ranking.emptyRankingTable(), indent=5))
+                    ranking.close()
             if splitId[-1] == "1":
                 Regional.setupRegionals(splitId, dictionaryQual)
                 initializeSplit(splitId, path + str(i + 1) + "\\split.json", dictionaryQual=dictionaryQual)

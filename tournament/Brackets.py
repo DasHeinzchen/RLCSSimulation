@@ -29,6 +29,8 @@ def checkResults(bracketDict):
         return Swiss.checkResults(bracketDict)
     elif bracketDict["type"] == "16-8Q-U-16L8D-8Q":
         return B16_8Q_U_16L8D_8Q.checkResults(bracketDict)
+    elif bracketDict["type"] == "16-4Q-U-32L8DSL4D-4Q":
+        return B16_4Q_U_32L8DSL4D_4Q.checkResults(bracketDict)
 
 
 class SE8:
@@ -215,8 +217,87 @@ class B16_8Q_U_16L8D_8Q:
         bracketDict["placements"]["qualified"] = bracketDict["ur1"]["winningTeams"] + bracketDict["lr2"]["winningTeams"]
         bracketDict["placements"]["eliminated"] = bracketDict["lr1"]["losingTeams"] + bracketDict["lr2"]["losingTeams"]
 
-        bracketDict["lr2"]["teams"] = bracketDict["ur1"]["losingTeams"] + bracketDict["lr1"]["winningTeams"]
-
         bracketDict = B16_8Q_U_16L8D_8Q.addTeams(bracketDict)
+
+        return bracketDict
+
+
+class B16_4Q_U_32L8DSL4D_4Q:
+    @staticmethod
+    def initialize(bracketId, variation):
+        variations = {
+            1: {
+                "ur1bo": 5,
+                "ur2bo": 5,
+                "lr1bo": 5,
+                "lr2bo": 5,
+                "lr3bo": 5,
+                "lr4bo": 5,
+                "lr5bo": 5
+            }
+        }
+        return {
+            "id": bracketId,
+            "type": "16-4Q-U-32L8DSL4D-4Q",
+            "current": False,
+            "currentPart": "",
+            "upcomingParts": ["lr1", "lr2", "ur1", "lr3", "lr4", "ur2", "lr5"],
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "placements": {
+                "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+            },
+            "ur1": Parts.RoundOf16.initialize(bracketId + "_UR1", variations[variation]["ur1bo"]),
+            "ur2": Parts.QuarterFinals.initialize(bracketId + "_UR2", variations[variation]["ur2bo"]),
+            "lr1": Parts.RoundOf32.initialize(bracketId + "_LR1", variations[variation]["lr1bo"]),
+            "lr2": Parts.RoundOf16.initialize(bracketId + "_LR2", variations[variation]["lr2bo"]),
+            "lr3": Parts.RoundOf16.initialize(bracketId + "_LR3", variations[variation]["lr3bo"]),
+            "lr4": Parts.QuarterFinals.initialize(bracketId + "_LR4", variations[variation]["lr4bo"]),
+            "lr5": Parts.QuarterFinals.initialize(bracketId + "_LR5", variations[variation]["lr5bo"])
+        }
+
+    @staticmethod
+    def addTeams(bracketDict):
+        bracketDict["ur1"]["teams"] = bracketDict["teams"][:16]
+        bracketDict["ur1"] = Parts.RoundOf16.addTeams(bracketDict["ur1"])
+
+        bracketDict["ur2"]["teams"] = bracketDict["ur1"]["winningTeams"]
+        bracketDict["ur2"] = Parts.QuarterFinals.addTeams(bracketDict["ur2"])
+
+        bracketDict["lr1"]["teams"] = bracketDict["teams"][16:]
+        bracketDict["lr1"] = Parts.RoundOf32.addTeams(bracketDict["lr1"])
+
+        bracketDict["lr2"]["teams"] = bracketDict["lr1"]["winningTeams"]
+        bracketDict["lr2"] = Parts.RoundOf16.addTeams(bracketDict["lr2"])
+
+        bracketDict["lr3"]["teams"] = bracketDict["ur1"]["losingTeams"] + bracketDict["lr2"]["winningTeams"]
+        bracketDict["lr3"] = Parts.RoundOf16.addTeams(bracketDict["lr3"])
+
+        bracketDict["lr4"]["teams"] = bracketDict["lr3"]["winningTeams"]
+        bracketDict["lr4"] = Parts.QuarterFinals.addTeams(bracketDict["lr4"])
+
+        bracketDict["lr5"]["teams"] = bracketDict["ur2"]["losingTeams"] + bracketDict["lr4"]["winningTeams"]
+        bracketDict["lr5"] = Parts.QuarterFinals.addTeams(bracketDict["lr5"])
+
+        return bracketDict
+
+    @staticmethod
+    def checkResults(bracketDict):
+        bracketDict["placements"]["qualified"] = bracketDict["ur2"]["winningTeams"] + bracketDict["lr5"]["winningTeams"]
+        bracketDict["placements"]["eliminated"] = bracketDict["lr1"]["losingTeams"] + \
+                                                  bracketDict["lr2"]["losingTeams"] + \
+                                                  bracketDict["lr3"]["losingTeams"] + \
+                                                  bracketDict["lr4"]["losingTeams"] + bracketDict["lr5"]["losingTeams"]
+
+        bracketDict = B16_4Q_U_32L8DSL4D_4Q.addTeams(bracketDict)
 
         return bracketDict

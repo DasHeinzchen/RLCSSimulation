@@ -2,6 +2,7 @@ import json
 
 import Globals, Team
 from tournament import Formats
+from ranking import Ranking
 
 
 class QualDay:
@@ -32,6 +33,7 @@ class QualDay:
         self._current = dictionary["current"]
         self._canceled = dictionary["canceled"]
         self._formatType = dictionary["formatType"]
+        self._teams, self._qualifiedTeams = [], []
         for team in dictionary["teams"]:
             self._teams.append(Team.getTeamById(team))
         for team in dictionary["qualifiedTeams"]:
@@ -82,6 +84,8 @@ class QualDay:
         self._current = False
         for team in self._formatDict["placements"]["qualified"]:
             self._qualifiedTeams.append(Team.getTeamById(team))
+        if self._formatType == "QualDay2":
+            print()
 
         self.saveData()
 
@@ -96,6 +100,9 @@ class QualDay:
     @teams.setter
     def teams(self, teams):
         self._teams = teams
+
+    def addTeams(self, teams):
+        self._teams = self._teams + teams
 
     @property
     def formatType(self):
@@ -164,7 +171,6 @@ def initializeQualification(regionalId, dictionaryQual={}):
 
 
 def setupQualification(splitId, regional, seasonStart=False):
-    #TODO add closed Qualification Teams
     unusedEvents = []
     for region in Globals.regions:
         teams = registerTeams(region)
@@ -185,16 +191,23 @@ def setupQualification(splitId, regional, seasonStart=False):
                     if len(teams) <= 8:
                         unusedEvents.append(splitId + "_" + region + "_REG1_QUAL2")
                         qual = QualDay(splitId + "_" + region + "_REG1_QUAL3")
-                        qual.teams = teams
+                        qual.addTeams(teams)
                         qual.saveData()
                     else:
                         qual.teams = teams
                         qual.saveData()
             else:
+                ranking = Ranking.RTable("RANK_" + splitId.split("_")[0] + "_" + region)
+                closedQual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL3")
+                closedQual.addTeams(ranking.topTeams(top=16, bot=9))
+                closedQual.saveData()
+
+                teams = registerTeams(region, ranking.topTeams(top=16))
+
                 if len(teams) <= 8:
                     unusedEvents.append(splitId + "_" + region + "_REG" + str(regional) + "_QUAL2")
                     qual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL3")
-                    qual.teams = teams
+                    qual.addTeams(teams)
                     qual.saveData()
                 else:
                     qual = QualDay(splitId + "_" + region + "_REG" + str(regional) + "_QUAL2")
@@ -215,5 +228,9 @@ def setupQualification(splitId, regional, seasonStart=False):
 
 
 def registerTeams(region, qualifiedTeams=[]):
-    teams = Team.teamsByRegion(region)
+    teams = []
+    for team in Team.teamsByRegion(region):
+        if not team in qualifiedTeams:
+            teams.append(team)
+
     return teams

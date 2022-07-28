@@ -3,11 +3,13 @@ import random
 
 import EventHandler
 import Globals
+import Log
 import Team
 
 
 class ScoreWindow:
     def __init__(self):
+        Log.new("i", "Init Score Window")
         scoreWindow = tk.Tk()
         scoreWindow.title("Score Window")
         scoreWindow.eval('tk::PlaceWindow . center')
@@ -74,6 +76,7 @@ class ScoreWindow:
 
 class MainWindow:
     def __init__(self):
+        Log.new("i", "Init Main Window")
         mainWindow = tk.Tk()
         mainWindow.title("Main Window")
         mainWindow.eval('tk::PlaceWindow . center')
@@ -107,7 +110,7 @@ class MainWindow:
                         event.saveData()
 
                         if condition: EventHandler.eventFinished()
-            print("simulated Bracket: " + bracket["id"])
+            Log.message("simulated Bracket: " + bracket["id"])
 
         scoreWindowBtn = tk.Button(mainWindow, text="Open Score Window", command=openScoreWindow)
         closeBtn = tk.Button(mainWindow, text="Close", command=close)
@@ -126,6 +129,7 @@ class MainWindow:
 
 class SeasonOverviewWindow:
     def __init__(self):
+        Log.new("i", "Init Season Overview Window")
         seasonOverviewWindow = tk.Tk()
         seasonOverviewWindow.title("Season Overview")
         seasonOverviewWindow.eval('tk::PlaceWindow . center')
@@ -134,8 +138,8 @@ class SeasonOverviewWindow:
 
 
 class SeasonCreateWindow:
-
     def __init__(self):
+        Log.new("i", "Init Season Create Window")
         seasonCreateWindow = tk.Tk()
         seasonCreateWindow.title("Create Season")
         seasonCreateWindow.eval('tk::PlaceWindow . center')

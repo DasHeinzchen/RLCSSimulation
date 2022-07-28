@@ -2,6 +2,8 @@ import Globals
 import json
 import os
 
+import Log
+
 
 class SplitValues:
     def __init__(self, splitMatches=0, splitMatchWins=0, splitSeries=0, splitSeriesWins=0):
@@ -138,6 +140,7 @@ class Team:
         return self._id
 
     def loadData(self):
+        Log.new("i", "Loading data for Team " + self._id)
         if not (os.path.isfile(Globals.settings["path"] + "teams\\" + self._region + "\\" + self._id + ".json")):
             file = open(Globals.settings["path"] + "teams\\" + self._region + "\\" + self._id + ".json", "a")
             file.write("{\n\"name\": \"" + self._name + "\"\n}")
@@ -153,6 +156,7 @@ class Team:
             file.close()
 
     def saveData(self):
+        Log.new("i", "Saving data for Team " + self._id)
         #Loading Values to dict
         self._dict.update({"totalMatches": self._totalMatches, "totalMatchWins": self._totalMatchWins, "totalSeries": self._totalSeries, "totalSeriesWins": self._totalSeriesWins})
 
@@ -263,6 +267,7 @@ def sort(list):
 
 
 def removeDuplicates(list):
+    Log.new("i", "Removing duplicated teams")
     indicies = []
     for i in range(len(list)):
         if i == 0:
@@ -272,6 +277,7 @@ def removeDuplicates(list):
                 indicies.append(i - len(indicies))
 
     for i in indicies:
+        Log.new("w", "Duplicate Team: " + list[i].id)
         list.pop(i)
 
     return list
@@ -298,6 +304,7 @@ defwin = Team("BYE", "", "bye")
 
 
 def readTeamsJson():
+    Log.new("i", "Reading Teams from Json")
     with open(Globals.settings["path"] + "config\\teams.json") as teamsFile:
         teamsJson = json.load(teamsFile)
         for team in teamsJson["teams"]:
@@ -352,9 +359,11 @@ def readTeamsJson():
     for team in _subSaharanAfricanTeams:
         team.loadData()
         subSaharanAfricanTeams.append(team)
+    Log.new("i", "Loaded Teams")
 
 
 def saveAllTeamData():
+    Log.new("i", "Saving Team data")
     for team in europeanTeams:
         team.saveData()
 
@@ -378,6 +387,7 @@ def saveAllTeamData():
 
     for team in subSaharanAfricanTeams:
         team.saveData()
+    Log.new("i", "Saved Team data")
 
 
 def getTeamById(teamId):
@@ -419,6 +429,7 @@ def getTeamById(teamId):
 
 def teamsByRegion(region, filter=[]):
     if not filter:
+        Log.new("i", "Requesting Teams from " + region + " without filter")
         if region == "EU":
             return europeanTeams
         elif region == "NA":
@@ -436,6 +447,7 @@ def teamsByRegion(region, filter=[]):
         elif region == "SSA":
             return subSaharanAfricanTeams
     else:
+        Log.new("i", "Requesting Teams from " + region + " with filter")
         if region == "EU":
             teams = europeanTeams
             for team in filter:

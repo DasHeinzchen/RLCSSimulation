@@ -107,6 +107,15 @@ class Regional:
     def teams(self, teams):
         self._teams = teams
 
+    def addTeams(self, teams):
+        for team in self._teams:
+            if team.id == "_tbd":
+                self._teams.remove(team)
+        self._teams = self._teams + teams
+
+        for i in range(16 - len(self._teams)):
+            self._teams.append(Team.placeholder)
+
 
 def initializeRegionals(regionalId, path, dictionaryQual):
     with open(path, "w") as regionalFile:

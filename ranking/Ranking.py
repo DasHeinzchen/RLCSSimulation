@@ -1,6 +1,8 @@
 import Globals
 import json
 
+import Team
+
 
 class RTable:
     def __init__(self, tableId):
@@ -67,6 +69,17 @@ class RTable:
             for j in range(0, len(self._ranking) - i - 1):
                 if self._items[self._ranking[j]].points < self._items[self._ranking[j+1]].points:
                     self._ranking[j], self._ranking[j+1] = self._ranking[j+1], self._ranking[j]
+
+    def topTeams(self, top=1, bot=1):
+        teams = []
+        if top >= bot:
+            for i in range(bot-1, top):
+                teams.append(Team.getTeamById(self._ranking[i]))
+        else:
+            ids = self._ranking[(bot-1):]
+            for id in ids:
+                teams.append(Team.getTeamById(id))
+        return teams
 
 
 class RTItem:

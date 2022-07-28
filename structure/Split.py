@@ -44,8 +44,16 @@ class Split:
 
     def startSplit(self):
         self._current = True
-        if self._currentEvent == "":
+        if self._currentEvent == "" and self._id[-1] == "1":
             for event in Qualification.setupQualification(self._id, 1, seasonStart=True):
+                self._upcomingEvents.remove(event)
+        elif self._currentEvent == self._id + "_SSA_REG1" or self._currentEvent == self._id + "_SSA_REG2":
+            for region in Globals.regions:
+                regional = Regional.Regional(self._id + "_" + region + "_REG" + str(int(self._currentEvent[-1]) + 1))
+                ranking = Ranking.RTable("RANK_" + self._id.split("_")[0] + "_" + region)
+                regional.addTeams(ranking.topTeams(top=8))
+                regional.saveData()
+            for event in Qualification.setupQualification(self._id, int(self._currentEvent[-1]) + 1):
                 self._upcomingEvents.remove(event)
         self._currentEvent = self._upcomingEvents.pop(0)
         self.saveData()

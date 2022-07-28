@@ -64,6 +64,8 @@ def checkResults(partDict):
         return SwissRound5.checkResults(partDict)
     elif partDict["type"] == "RO16":
         return RoundOf16.checkResults(partDict)
+    elif partDict["type"] == "RO32":
+        return RoundOf32.checkResults(partDict)
 
 
 def seeding(bracketDict, partDict):
@@ -1140,8 +1142,6 @@ class RoundOf16:
     @staticmethod
     def addTeams(partDict):
         for i in range(8):
-            #print(partDict["s" + str(i+1)])
-            #print(type(partDict["s" + str(i+1)]))
             partDict["s" + str(i+1)]["team1"] = partDict["teams"][i]
             partDict["s" + str(i+1)]["team2"] = partDict["teams"][15-i]
 
@@ -1159,4 +1159,53 @@ class RoundOf16:
                 = partDict[partDict["currentSeries"]]["team2"]
             partDict["losingTeams"][int(partDict["currentSeries"][-1]) - 1] \
                 = partDict[partDict["currentSeries"]]["team1"]
+        return partDict
+
+
+class RoundOf32:
+    @staticmethod
+    def initialize(partId, bo):
+        dictionary = {
+            "id": partId,
+            "type": "RO32",
+            "current": False,
+            "currentSeries": "",
+            "upcomingSeries": [],
+            "bestOf": bo,
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                             "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                            "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+        }
+        for i in range(16):
+            dictionary["upcomingSeries"].append("s" + str(i + 1))
+            dictionary.update({"s" + str(i + 1): Games.Series.initialize(partId + "_SER" + str(i + 1), bo)})
+        return dictionary
+
+    @staticmethod
+    def addTeams(partDict):
+        for i in range(16):
+            partDict["s" + str(i+1)]["team1"] = partDict["teams"][i]
+            partDict["s" + str(i+1)]["team2"] = partDict["teams"][31-i]
+
+        return partDict
+
+    @staticmethod
+    def checkResults(partDict):
+        #print("1" + str(partDict))
+        if partDict[partDict["currentSeries"]]["winner"] == 1:
+            partDict["winningTeams"][int(partDict["currentSeries"][1:]) - 1] \
+                = partDict[partDict["currentSeries"]]["team1"]
+            partDict["losingTeams"][int(partDict["currentSeries"][1:]) - 1] \
+                = partDict[partDict["currentSeries"]]["team2"]
+        elif partDict[partDict["currentSeries"]]["winner"] == 2:
+            partDict["winningTeams"][int(partDict["currentSeries"][1:]) - 1] \
+                = partDict[partDict["currentSeries"]]["team2"]
+            partDict["losingTeams"][int(partDict["currentSeries"][1:]) - 1] \
+                = partDict[partDict["currentSeries"]]["team1"]
+        #print("2" + str(partDict))
         return partDict

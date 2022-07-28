@@ -1,6 +1,8 @@
 import Globals
 import json
 import os
+
+import Log
 import structure.Split as Split
 from ranking import Ranking
 
@@ -9,7 +11,8 @@ class Season:
     def __init__(self, seasonId):
         self._id = seasonId
         self._current = False
-        self._currentSplit = ""
+        self._currentSplit = None
+        self._currentSplitId = ""
         self._upcomingSplits = []
 
         self.loadData()
@@ -19,7 +22,7 @@ class Season:
             dictionary = json.load(seasonFile)
 
             self._current = dictionary["current"]
-            self._currentSplit = dictionary["currentSplit"]
+            self._currentSplitId = dictionary["currentSplit"]
             self._upcomingSplits = dictionary["upcomingSplits"]
 
             seasonFile.close()
@@ -30,7 +33,7 @@ class Season:
         with open(Globals.settings["path"] + "seasons\\" + self._id + "\\season.json", "w") as seasonFile:
             dictionary = {
                 "current": self._current,
-                "currentSplit": self._currentSplit,
+                "currentSplit": self._currentSplitId,
                 "upcomingSplits": self._upcomingSplits
             }
 
@@ -38,7 +41,7 @@ class Season:
             seasonFile.close()
 
     def start(self):
-        Split.Split(self._currentSplit).startSplit()
+        Split.Split(self._currentSplitId).startSplit()
 
     @property
     def id(self):
@@ -50,7 +53,7 @@ class Season:
 
     @property
     def currentSplit(self):
-        return self._currentSplit
+        return self._currentSplitId
 
 
 def readSeasonsJson():
@@ -81,6 +84,7 @@ def initializeSeason(seasonId):
 
 
 def setupSeason(dictionaryQual):
+    Log.new("i", "Starting to setup season")
     seasonId = "S"
     with open(Globals.settings["path"] + "seasons\\seasons.json") as seasonsFile:
         seasonsJson = json.load(seasonsFile)

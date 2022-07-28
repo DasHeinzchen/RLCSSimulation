@@ -1,3 +1,4 @@
+import EventHandler
 import tournament.Brackets as Brackets
 
 
@@ -25,8 +26,12 @@ def submitScore(formatDict, bracketDict, condition):
 def checkResults(formatDict):
     if formatDict["type"] == "Fall_Format":
         return FallFormat.checkResults(formatDict)
+    elif formatDict["type"] == "Swiss":
+        return Swiss.checkResults(formatDict)
     elif formatDict["type"] == "OQD3:16-8Q-U-16L8D-8Q":
         return OpenQualDay3.checkResults(formatDict)
+    elif formatDict["type"] == "QD2:16-4Q-U-32L8DSL4D-4Q":
+        return QualDay2.checkResults(formatDict)
 
 
 class FallFormat:
@@ -115,6 +120,50 @@ class Swiss:
         return formatDict
 
 
+class QualDay2:
+    @staticmethod
+    def initialize(formatId):
+        return {
+            "type": "QD2:16-4Q-U-32L8DSL4D-4Q",
+            "current": False,
+            "currentBracket": "",
+            "upcomingBrackets": ["qualification"],
+            "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                      "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+            "placements": {
+                "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                               "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+            },
+            "qualification": Brackets.B16_4Q_U_32L8DSL4D_4Q.initialize(formatId + "_QUAL", 1)
+        }
+
+    @staticmethod
+    def addTeams(formatDict):
+        for i in range(48 - len(formatDict["teams"])):
+            formatDict["teams"].append("_bye")
+        formatDict["qualification"]["teams"] = formatDict["teams"]
+        formatDict["qualification"] = Brackets.B16_4Q_U_32L8DSL4D_4Q.addTeams(formatDict["qualification"])
+
+        return formatDict
+
+    @staticmethod
+    def checkResults(formatDict):
+        formatDict["placements"].update({
+            "qualified": formatDict["qualification"]["placements"]["qualified"],
+            "eliminated": formatDict["qualification"]["placements"]["eliminated"]
+        })
+
+        return formatDict
+
+
 class OpenQualDay3:
     @staticmethod
     def initialize(formatId):
@@ -156,6 +205,8 @@ class OpenQualDay3:
 def initializeFormat(formatType, formatId):
     if formatType == "Fall_Format":
         return FallFormat.initialize(formatId)
+    elif formatType == "QualDay2":
+        return QualDay2.initialize(formatId)
     elif formatType == "QualDay3":
         return Swiss.initialize(formatId, 1)
     elif formatType == "OpenQualDay3":
@@ -168,6 +219,15 @@ def initializeFormat(formatType, formatId):
 def addTeams(formatDict, teams):
     formatDict["teams"] = teams
     if formatDict["type"] == "Fall_Format":
-        return FallFormat.addTeams(formatDict)
+        formatDict = FallFormat.addTeams(formatDict)
+    elif formatDict["type"] == "Swiss":
+        formatDict = Swiss.addTeams(formatDict)
     elif formatDict["type"] == "OQD3:16-8Q-U-16L8D-8Q":
-        return OpenQualDay3.addTeams(formatDict)
+        formatDict = OpenQualDay3.addTeams(formatDict)
+    elif formatDict["type"] == "QD2:16-4Q-U-32L8DSL4D-4Q":
+        formatDict = QualDay2.addTeams(formatDict)
+
+    bye = True and formatDict["current"]
+    while bye:
+        formatDict, condition, bye = EventHandler.checkForBye(formatDict)
+    return formatDict

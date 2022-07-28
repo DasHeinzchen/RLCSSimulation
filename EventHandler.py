@@ -1,11 +1,14 @@
 import Globals
+import Log
 import Team
 from structure import Season, Split, Major, Regional, Qualification
 from tournament import Brackets, BracketParts, Formats, Games
 
 
 def close():
+    Log.new("w", "Shutting down program")
     Team.saveAllTeamData()
+    Log.saveLog()
 
 
 def initializeSeason(dictionaryQual):

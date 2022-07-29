@@ -1,4 +1,5 @@
 from tournament import Games
+import Log
 
 
 def submitScore(partDict, seriesDict, condition):
@@ -20,7 +21,7 @@ def submitScore(partDict, seriesDict, condition):
 def startPart(partDict):
     partDict["current"] = True
     partDict["currentSeries"] = partDict["upcomingSeries"].pop(0)
-    partDict[partDict["currentSeries"]] = Games.Series.start(partDict[partDict["currentSeries"]])
+    partDict[partDict["currentSeries"]] = Games.OldSeries.start(partDict[partDict["currentSeries"]])
     return partDict
 
 
@@ -35,7 +36,7 @@ def submitSetScore(partDict, seriesDict):
             and not len(partDict["upcomingSeries"]) == ((partDict["setBestOf"] + 1) / 2) - partDict["setScore2"]):
         partDict["upcomingSeries"].append("fin" + series)
         partDict.update({"fin" + series:
-                             Games.Series.initialize(partDict["id"] + "_" + series, partDict["bestOf"])})
+                             Games.OldSeries.initialize(partDict["id"] + "_" + series, partDict["bestOf"])})
         partDict["fin" + series]["team1"] = partDict["teams"][0]
         partDict["fin" + series]["team2"] = partDict["teams"][1]
 
@@ -83,6 +84,280 @@ def seeding(bracketDict, partDict):
         return bracketDict
 
 
+class BracketPartFinishedEvent:
+    def __init__(self):
+        self.__eventhandler = []
+
+    def __iadd__(self, Eventhandler):
+        Log.new("i", "Adding Listener to BracketPartFinished")
+        self.__eventhandler.append(Eventhandler)
+        return self
+
+    def __isub__(self, Eventhandler):
+        Log.new("i", "Removing Listener from BracketPartFinished")
+        self.__eventhandler.remove(Eventhandler)
+        return self
+
+    def __call__(self, bracketPartObj):
+        Log.new("i", "Calling BracketPartFinished")
+        for handler in self.__eventhandler:
+            handler(bracketPartObj)
+
+
+class BracketPart:
+    def __init__(self, partDict):
+        Log.new("i", "Generating new Bracket Part Object")
+        Log.new("e", "Sets not implemented")
+
+        self.id = partDict["id"]
+        self.type = partDict["type"]
+        self.current = partDict["current"]
+        self.currentSet = partDict["currentSet"]
+        self.upcomingSets = partDict["upcomingSets"]
+        self.teams = partDict["teams"]
+        self.placements = partDict["placements"]
+        # TODO series
+        self.bracketPartFinishedEvent = BracketPartFinishedEvent()
+
+    def asDict(self):
+        Log.new("i", "Converting Bracket Part object to dict")
+        Log.new("e", "Sets not implemented")
+        return {
+            "id": self.id,
+            "type": self.type,
+            "current": self.current,
+            "currentSet": self.currentSet,
+            "upcomingSets": self.upcomingSets,
+            "teams": self.teams,
+            "placements": self.placements
+            # TODO series
+        }
+
+    @staticmethod
+    def newBracketPart(partId, type, setBo, seriesBo):
+        Log.new("i", "Creating new Bracket Part '" + partId + "' with type '" + type + "'")
+        partDict = {
+            "id": partId,
+            "type": type,
+            "current": False,
+            "currentSet": "",
+            "upcomingSets": [],
+            "teams": [],
+            "placements": {},
+            "series": {}
+        }
+
+        if type == "RO2":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set"],
+                "teams": ["_tbd", "_tbd"],
+                "placements": {
+                    "winner": "_tbd",
+                    "loser": "_tbd"
+                }
+                # TODO series
+            })
+        elif type == "RO4":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1, set2"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": ["_tbd", "_tbd"],
+                    "losingTeams": ["_tbd", "_tbd"]
+                }
+                # TODO series
+            })
+        elif type == "RO8":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1", "set2", "set3", "set4"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd"],
+                    "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO series
+            })
+        elif type == "RO16":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1", "set2", "set3", "set4", "set5", "set6", "set7", "set8"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO series
+            })
+        elif type == "RO32":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1", "set2", "set3", "set4", "set5", "set6", "set7", "set8",
+                                 "set9", "set10", "set11", "set12", "set13", "set14", "set15", "set16"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                     "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                    "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO series
+            })
+        elif type == "SWR1":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1", "set2", "set3", "set4", "set5", "set6", "set7", "set8"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0":  [],
+                        "3-1": [],
+                        "3-2": []
+                    },
+                    "losingTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    }
+                }
+                # TODO series
+            })
+        elif type == "SWR2":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["h1", "l1", "h2", "l2", "h3", "l3", "h4", "l4"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "winningTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": []
+                    },
+                    "midTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": [],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    },
+                    "losingTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd"],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    }
+                }
+                # TODO series
+            })
+        elif type == "SWR3":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["m1", "m2", "m3", "m4", "l1", "h1", "l2", "h2"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualTeams": {
+                        "teams": ["_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": []
+                    },
+                    "elimTeams": {
+                        "teams": ["_tbd", "_tbd"],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    },
+                    "highTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": [],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    },
+                    "lowTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": [],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    }
+                }
+                # TODO series
+            })
+        elif type == "SWR4":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["h1", "l1", "h2", "l2", "h3", "l3"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": []
+                    },
+                    "elimTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd"],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    },
+                    "midTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": [],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    }
+                }
+                # TODO series
+            })
+        elif type == "SWR5":
+            Log.new("e", "sets not implemented")
+            partDict.update({
+                "upcomingSets": ["set1", "set2", "set3"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd"],
+                        "3-0": [],
+                        "3-1": [],
+                        "3-2": []
+                    },
+                    "elimTeams": {
+                        "teams": ["_tbd", "_tbd", "_tbd"],
+                        "0-3": [],
+                        "1-3": [],
+                        "2-3": []
+                    }
+                }
+                # TODO series
+            })
+
+        return BracketPart(partDict)
+
+
 class QuarterFinals:
     @staticmethod
     def initialize(partId, bo):
@@ -96,10 +371,10 @@ class QuarterFinals:
             "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
             "winningTeams": ["_tbd", "_tbd", "_tbd", "_tbd"],
             "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd"],
-            "qf1": Games.Series.initialize(partId + "_1", bo),
-            "qf2": Games.Series.initialize(partId + "_2", bo),
-            "qf3": Games.Series.initialize(partId + "_3", bo),
-            "qf4": Games.Series.initialize(partId + "_4", bo)
+            "qf1": Games.OldSeries.initialize(partId + "_1", bo),
+            "qf2": Games.OldSeries.initialize(partId + "_2", bo),
+            "qf3": Games.OldSeries.initialize(partId + "_3", bo),
+            "qf4": Games.OldSeries.initialize(partId + "_4", bo)
         }
 
     @staticmethod
@@ -142,8 +417,8 @@ class SemiFinals:
             "teams": ["_tbd", "_tbd", "_tbd", "_tbd"],
             "winningTeams": ["_tbd", "_tbd"],
             "losingTeams": ["_tbd", "_tbd"],
-            "sf1": Games.Series.initialize(partId + "_1", bo),
-            "sf2": Games.Series.initialize(partId + "_2", bo)
+            "sf1": Games.OldSeries.initialize(partId + "_1", bo),
+            "sf2": Games.OldSeries.initialize(partId + "_2", bo)
         }
 
     @staticmethod
@@ -189,7 +464,7 @@ class Finals:
         }
         for i in range(int((setBo + 1) / 2)):
             dictionary.update({
-                "fin" + str(i+1): Games.Series.initialize(partId + "_" + str(i+1), bo)
+                "fin" + str(i+1): Games.OldSeries.initialize(partId + "_" + str(i + 1), bo)
             })
             dictionary["upcomingSeries"].append("fin" + str(i+1))
 
@@ -246,7 +521,7 @@ class SwissRound1:
             }
         }
         for i in range(8):
-            dictionary.update({"s" + str(i+1): Games.Series.initialize(partId + "_SER" + str(i+1), bo)})
+            dictionary.update({"s" + str(i+1): Games.OldSeries.initialize(partId + "_SER" + str(i + 1), bo)})
 
         return dictionary
 
@@ -381,9 +656,9 @@ class SwissRound2:
             }
         }
         for i in range(4):
-            dictionary.update({"h" + str(i+1): Games.Series.initialize(partId + "_HI" + str(i+1), bo)})
+            dictionary.update({"h" + str(i+1): Games.OldSeries.initialize(partId + "_HI" + str(i + 1), bo)})
         for i in range(4):
-            dictionary.update({"l" + str(i+1): Games.Series.initialize(partId + "_LO" + str(i+1), bo)})
+            dictionary.update({"l" + str(i+1): Games.OldSeries.initialize(partId + "_LO" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod
@@ -612,11 +887,11 @@ class SwissRound3:
             }
         }
         for i in range(2):
-            dictionary.update({"h" + str(i+1): Games.Series.initialize(partId + "_HI" + str(i+1), bo)})
+            dictionary.update({"h" + str(i+1): Games.OldSeries.initialize(partId + "_HI" + str(i + 1), bo)})
         for i in range(4):
-            dictionary.update({"m" + str(i+1): Games.Series.initialize(partId + "_MID" + str(i+1), bo)})
+            dictionary.update({"m" + str(i+1): Games.OldSeries.initialize(partId + "_MID" + str(i + 1), bo)})
         for i in range(2):
-            dictionary.update({"l" + str(i+1): Games.Series.initialize(partId + "_LO" + str(i+1), bo)})
+            dictionary.update({"l" + str(i+1): Games.OldSeries.initialize(partId + "_LO" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod
@@ -880,8 +1155,8 @@ class SwissRound4:
         }
 
         for i in range(3):
-            dictionary.update({"h" + str(i+1): Games.Series.initialize(partId + "_HI" + str(i+1), bo)})
-            dictionary.update({"l" + str(i+1): Games.Series.initialize(partId + "_LO" + str(i+1), bo)})
+            dictionary.update({"h" + str(i+1): Games.OldSeries.initialize(partId + "_HI" + str(i + 1), bo)})
+            dictionary.update({"l" + str(i+1): Games.OldSeries.initialize(partId + "_LO" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod
@@ -1047,7 +1322,7 @@ class SwissRound5:
             }
         }
         for i in range(3):
-            dictionary.update({"s" + str(i+1): Games.Series.initialize(partId + "_SER" + str(i+1), bo)})
+            dictionary.update({"s" + str(i+1): Games.OldSeries.initialize(partId + "_SER" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod
@@ -1136,7 +1411,7 @@ class RoundOf16:
             "losingTeams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
         }
         for i in range(8):
-            dictionary.update({"s" + str(i + 1): Games.Series.initialize(partId + "_SER" + str(i + 1), bo)})
+            dictionary.update({"s" + str(i + 1): Games.OldSeries.initialize(partId + "_SER" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod
@@ -1183,7 +1458,7 @@ class RoundOf32:
         }
         for i in range(16):
             dictionary["upcomingSeries"].append("s" + str(i + 1))
-            dictionary.update({"s" + str(i + 1): Games.Series.initialize(partId + "_SER" + str(i + 1), bo)})
+            dictionary.update({"s" + str(i + 1): Games.OldSeries.initialize(partId + "_SER" + str(i + 1), bo)})
         return dictionary
 
     @staticmethod

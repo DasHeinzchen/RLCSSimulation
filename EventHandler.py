@@ -43,8 +43,8 @@ def submitScore(score1, score2, formatDict):
     bracket, bracketPart, series, match = loadFormat(formatDict)
     condition = False
     sideCondition = False
-    match = Games.Match.submitScore(score1, score2, match)
-    series, condition = Games.Series.submitScore(series, match)
+    match = Games.OldMatch.submitScore(score1, score2, match)
+    series, condition = Games.OldSeries.submitScore(series, match)
     sideCondition += condition
     bracketPart, condition = BracketParts.submitScore(bracketPart, series, condition)
     if bool(sideCondition):

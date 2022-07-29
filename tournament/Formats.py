@@ -1,4 +1,5 @@
 import EventHandler
+import Log
 import tournament.Brackets as Brackets
 
 
@@ -32,6 +33,138 @@ def checkResults(formatDict):
         return OpenQualDay3.checkResults(formatDict)
     elif formatDict["type"] == "QD2:16-4Q-U-32L8DSL4D-4Q":
         return QualDay2.checkResults(formatDict)
+
+
+class FormatFinishedEvent:
+    def __init__(self):
+        self.__eventhandler = []
+
+    def __iadd__(self, Eventhandler):
+        Log.new("i", "Adding Listener to FormatFinished")
+        self.__eventhandler.append(Eventhandler)
+        return self
+
+    def __isub__(self, Eventhandler):
+        Log.new("i", "Removing Listener from FormatFinished")
+        self.__eventhandler.remove(Eventhandler)
+        return self
+
+    def __call__(self, formatObj):
+        Log.new("i", "Calling FormatFinished")
+        for handler in self.__eventhandler:
+            handler(formatObj)
+
+
+class Format:
+    def __init__(self, formatDict):
+        Log.new("i", "Generating new Format object")
+        Log.new("e", "Brackets not implemented")
+        self.type = formatDict["type"]
+        self.current = formatDict["current"]
+        self.currentBracket = formatDict["currentBracket"]
+        self.upcomingBrackets = formatDict["upcomingBrackets"]
+        self.teams = formatDict["teams"]
+        self.placements = formatDict["placements"]
+        #TODO brackets
+        self.formatFinishedEvent = FormatFinishedEvent()
+
+    def asDict(self):
+        Log.new("i", "Converting Format object to dict")
+        Log.new("e", "Brackets not implemented")
+        return {
+            "type": self.type,
+            "current": self.current,
+            "currentBracket": self.currentBracket,
+            "upcomingBrackets": self.upcomingBrackets,
+            "teams": self.teams,
+            "placements": self.placements
+            #TODO brackets
+        }
+
+    @staticmethod
+    def newFormat(type, formatId):
+        Log.new("i", "Creating new Format '" + formatId + "' with type '" + type + "'")
+        formatDict = {
+            "type": type,
+            "current": False,
+            "currentBracket": "",
+            "upcomingBrackets": [],
+            "teams": [],
+            "placements": {},
+            "brackets": {}
+        }
+
+        if type == "Fall_Format":
+            Log.new("e", "brackets not implemented")
+            formatDict.update({
+                "upcomingBrackets": ["swissStage", "playoffs"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "1": "_tbd",
+                    "2": "_tbd",
+                    "3-4": ["_tbd", "_tbd"],
+                    "5-8": ["_tbd", "_tbd", "_tbd", "_tbd"],
+                    "9-11": ["_tbd", "_tbd", "_tbd"],
+                    "12-14": ["_tbd", "_tbd", "_tbd"],
+                    "15-16": ["_tbd", "_tbd"]
+                }
+                #TODO brackets
+            })
+        elif type == "Swiss":
+            Log.new("e", "brackets not implemented")
+            formatDict.update({
+                "upcomingBrackets": ["swissStage"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "1-2": ["_tbd", "_tbd"],
+                    "3-5": ["_tbd", "_tbd", "_tbd"],
+                    "6-8": ["_tbd", "_tbd", "_tbd"],
+                    "9-11": ["_tbd", "_tbd", "_tbd"],
+                    "12-14": ["_tbd", "_tbd", "_tbd"],
+                    "15-16": ["_tbd", "_tbd"]
+                }
+                #TODO brackets
+            })
+        elif type == "QD2:16-4Q-U-32L8DSL4D-4Q":
+            Log.new("e", "brackets not implemented")
+            formatDict.update({
+                "upcomingBrackets": ["qualification"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO brackets
+            })
+        elif type == "OQD3:16-8Q-U-16L8D-8Q":
+            Log.new("e", "brackets not implemented")
+            formatDict.update({
+                "upcomingBrackets": ["qualification"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                  "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO brackets
+            })
+
+        return Format(formatDict)
 
 
 class FallFormat:

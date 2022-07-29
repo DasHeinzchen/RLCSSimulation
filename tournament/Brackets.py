@@ -1,4 +1,50 @@
 import tournament.BracketParts as Parts
+import Log
+
+
+variations = {
+    "SE8": {
+        1: {
+            "qfbo": 7,
+            "sfbo": 7,
+            "fset": 3,
+            "fbo": 7
+        },
+        2: {
+            "qfbo": 1,
+            "sfbo": 1,
+            "fset": 1,
+            "fbo": 1
+        }
+    },
+    "SWISS": {
+        1: {
+            "r1bo": 5,
+            "r2bo": 5,
+            "r3bo": 5,
+            "r4bo": 5,
+            "r5bo": 5
+        }
+    },
+    "16-8Q-U-16L8D-8Q": {
+        1: {
+            "ur1bo": 5,
+            "lr1bo": 5,
+            "lr2bo": 5
+        }
+    },
+    "16-4Q-U-32L8DSL4D-4Q": {
+        1: {
+            "ur1bo": 5,
+            "ur2bo": 5,
+            "lr1bo": 5,
+            "lr2bo": 5,
+            "lr3bo": 5,
+            "lr4bo": 5,
+            "lr5bo": 5
+        }
+    }
+}
 
 
 def submitScore(bracketDict, partDict, condition):
@@ -31,6 +77,144 @@ def checkResults(bracketDict):
         return B16_8Q_U_16L8D_8Q.checkResults(bracketDict)
     elif bracketDict["type"] == "16-4Q-U-32L8DSL4D-4Q":
         return B16_4Q_U_32L8DSL4D_4Q.checkResults(bracketDict)
+
+
+class BracketFinishedEvent:
+    def __init__(self):
+        self.__eventhandler = []
+
+    def __iadd__(self, Eventhandler):
+        Log.new("i", "Adding Listener to BracketFinished")
+        self.__eventhandler.append(Eventhandler)
+        return self
+
+    def __isub__(self, Eventhandler):
+        Log.new("i", "Removing Listener from BracketFinished")
+        self.__eventhandler.remove(Eventhandler)
+        return self
+
+    def __call__(self, bracketObj):
+        Log.new("i", "Calling BracketFinished")
+        for handler in self.__eventhandler:
+            handler(bracketObj)
+
+
+class Bracket:
+    def __init__(self, bracketDict):
+        Log.new("i", "Generating new Bracket Object")
+        Log.new("e", "Bracket Parts not implemented")
+        self.id = bracketDict["id"]
+        self.type = bracketDict["type"]
+        self.current = bracketDict["current"]
+        self.currentPart = bracketDict["currentPart"]
+        self.upcomingParts = bracketDict["upcomingParts"]
+        self.teams = bracketDict["teams"]
+        self.placements = bracketDict["placements"]
+        self.helper = bracketDict["helper"]
+        # TODO parts
+        self.BracketFinishedEvent = BracketFinishedEvent()
+
+    def asDict(self):
+        Log.new("i", "Converting Bracket object to dict")
+        Log.new("e", "Bracket Parts not implemented")
+        return {
+            "id": self.id,
+            "type": self.type,
+            "current": self.current,
+            "currentPart": self.currentPart,
+            "upcomingParts": self.upcomingParts,
+            "teams": self.teams,
+            "placements": self.placements,
+            "helper": self.helper
+            # TODO parts
+        }
+
+    @staticmethod
+    def newBracket(bracketId, type, variationInd):
+        Log.new("i", "Creating new Bracket '" + bracketId + "' with type '" + type + "'")
+        bracketDict = {
+            "id": bracketId,
+            "type": type,
+            "current": False,
+            "currentPart": "",
+            "upcomingParts": [],
+            "teams": [],
+            "placements": {},
+            "helper": {},
+            "parts": {}
+        }
+        variation = variations[type][variationInd]
+
+        if type == "SE8":
+            Log.new("e", "parts not implemented")
+            bracketDict.update({
+                "upcomingParts": ["quarterFinals", "semiFinals", "finals"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "1": "_tbd",
+                    "2": "_tbd",
+                    "3-4": ["_tbd", "_tbd"],
+                    "5-8": ["_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO parts
+            })
+        elif type == "SWISS":
+            Log.new("e", "parts not implemented")
+            bracketDict.update({
+                "upcomingParts": ["r1", "r2", "r3", "r4", "r5"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "helper": {
+                    "gameDiff": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                "placements": {
+                    "1-2": ["_tbd", "_tbd"],
+                    "3-5": ["_tbd", "_tbd", "_tbd"],
+                    "6-8": ["_tbd", "_tbd", "_tbd"],
+                    "9-11": ["_tbd", "_tbd", "_tbd"],
+                    "12-14": ["_tbd", "_tbd", "_tbd"],
+                    "15-16": ["_tbd", "_tbd"]
+                }
+                # TODO parts
+            })
+        elif type == "16-8Q-U-16L8D-8Q":
+            Log.new("e", "parts not implemented")
+            bracketDict.update({
+                "upcomingParts": ["ur1", "lr1", "lr2"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                  "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO parts
+            })
+        elif type == "16-4Q-U-32L8DSL4D-4Q":
+            Log.new("e", "parts not implemented")
+            bracketDict.update({
+                "upcomingParts": ["lr1", "lr2", "ur1", "lr3", "lr4", "ur2", "lr5"],
+                "teams": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                          "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                "placements": {
+                    "qualified": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"],
+                    "eliminated": ["_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd",
+                                   "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd", "_tbd"]
+                }
+                # TODO parts
+            })
+
+        return Bracket(bracketDict)
 
 
 class SE8:
